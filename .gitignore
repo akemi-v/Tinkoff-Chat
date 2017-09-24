@@ -1,0 +1,8 @@
+# Ignore directories:
+**/build
+**/DerivedData
+**/xcuserdata
+
+# Ignore files with extensions:
+*.xccheckout
+*.xcscmblueprint
