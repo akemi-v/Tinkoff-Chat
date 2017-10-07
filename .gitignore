@@ -6,3 +6,6 @@
 # Ignore files with extensions:
 *.xccheckout
 *.xcscmblueprint
+
+# Ignore files:
+.DS_Store
