@@ -2,8 +2,8 @@
 //  ProfileViewController.swift
 //  TinkoffChat
 //
-//  Created by Apple on 9/20/17.
-//  Copyright © 2017 Mari. All rights reserved.
+//  Created by Maria Semakova on 9/20/17.
+//  Copyright © 2017 Maria Semakova. All rights reserved.
 //
 
 import UIKit
@@ -16,7 +16,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-//        print("Method: \(#function) editButton.frame: \(editButton.frame)")
+        //        print("Method: \(#function) editButton.frame: \(editButton.frame)")
         /* fatal error: unexpectedly found nil while unwrapping an Optional value
          editButton еще не была создана */
     }
@@ -25,7 +25,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         super.viewDidLoad()
         
-        print("Method: \(#function) editButton.frame: \(editButton.frame)")
+//        print("Method: \(#function) editButton.frame: \(editButton.frame)")
         
         chooseProfilePicButton.layer.cornerRadius = chooseProfilePicButton.frame.width / 2
         chooseProfilePicButton.layer.masksToBounds = true;
@@ -36,6 +36,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         editButton.layer.borderColor = UIColor.black.cgColor
         editButton.layer.borderWidth = 1
         editButton.layer.cornerRadius = 10
+        
+        let backButton = UIBarButtonItem(title: "Закрыть", style: UIBarButtonItemStyle.plain, target: self, action: #selector(goBack))
+        navigationItem.leftBarButtonItem = backButton
+    }
+    
+    @objc func goBack(){
+        self.dismiss(animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -46,7 +53,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        print("Method: \(#function) editButton.frame: \(editButton.frame)")
+//        print("Method: \(#function) editButton.frame: \(editButton.frame)")
         /* Метод вызывается перед тем, как view будет добавлен в иерархию,
          поэтому параметры фрейма editButton те же, что и в viewDidLoad.
          Параметры берутся из storyboard*/
@@ -54,7 +61,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("Method: \(#function) editButton.frame: \(editButton.frame)")
+//        print("Method: \(#function) editButton.frame: \(editButton.frame)")
         /* view был добавлен в иерархию, а параметры subviews были настроены с учетом constraints
          Девайсы storyboard'а и симулятора отличаются, поэтому параметры фрейма editButton во viewDidAppear отличается */
     }
@@ -148,5 +155,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
+    
 }
 

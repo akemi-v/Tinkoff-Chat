@@ -2,8 +2,8 @@
 //  ConversationsListCell.swift
 //  TinkoffChat
 //
-//  Created by Apple on 10/5/17.
-//  Copyright © 2017 Mari. All rights reserved.
+//  Created by Maria Semakova on 10/5/17.
+//  Copyright © 2017 Maria Semakova. All rights reserved.
 //
 
 import UIKit
@@ -43,13 +43,24 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
             return _message
         }
         set {
-            if (newValue != nil) {
-                _message = newValue
+            _message = newValue
+            if _message != nil {
+                self.lastMessageLabel.text = _message
+                self.lastMessageLabel.textColor = UIColor .black
+                self.lastMessageLabel.font = UIFont.systemFont(ofSize: 17.0)
             } else {
-                _message = "No messages yet"
+                self.lastMessageLabel.text = "No messages yet"
+                self.lastMessageLabel.textColor = UIColor .gray
                 self.lastMessageLabel.font = UIFont.italicSystemFont(ofSize: 17.0)
             }
-            self.lastMessageLabel.text = _message
+//            if newValue != nil {
+//                _message = newValue
+//                updateFontFormatting()
+//            } else {
+//                _message = "No messages yet"
+//                updateFontFormatting()
+//            }
+//            self.lastMessageLabel.text = _message
         }
     }
     
@@ -59,9 +70,13 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
         }
         set {
             _date = newValue
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd-MM-yyyy"
-            let stringDate : String = formatter.string(from: _date!)
+            let dateFormatter = DateFormatter()
+            if Calendar.current.isDateInToday(_date!) {
+                dateFormatter.dateFormat = "HH:mm"
+            } else {
+                dateFormatter.dateFormat = "dd MMM"
+            }
+            let stringDate : String = dateFormatter.string(from: _date!)
 
             self.timeLabel.text = stringDate
         }
@@ -73,6 +88,11 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
         }
         set {
             _online = newValue
+            if _online {
+                self.backgroundColor = UIColor(red: 252/255, green: 243/255, blue: 197/255, alpha: 1.0)
+            } else {
+                self.backgroundColor = UIColor .white
+            }
         }
     }
     
@@ -82,6 +102,13 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
         }
         set {
             _hasUnreadMessages = newValue
+            if _hasUnreadMessages {
+                self.lastMessageLabel.font = UIFont.boldSystemFont(ofSize: 19.0)
+            } else if _message != nil {
+                self.lastMessageLabel.font = UIFont.systemFont(ofSize: 17.0)
+            } else {
+                self.lastMessageLabel.font = UIFont.italicSystemFont(ofSize: 17.0)
+            }
         }
     }
 

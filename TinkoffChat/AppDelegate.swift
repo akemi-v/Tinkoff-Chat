@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  TinkoffChat
 //
-//  Created by Apple on 9/20/17.
-//  Copyright © 2017 Mari. All rights reserved.
+//  Created by Maria Semakova on 9/20/17.
+//  Copyright © 2017 Maria Semakova. All rights reserved.
 //
 
 import UIKit
