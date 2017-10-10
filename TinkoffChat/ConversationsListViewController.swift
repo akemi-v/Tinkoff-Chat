@@ -26,8 +26,10 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
         dummyConversations.append(dummyConversationsListCellData(name: "Нерандом", message: nil, date: Date(), online: true, hasUnreadMessages: false))
-        
-        for _ in 1...numOfUsers["Online"]! - 1 {
+        guard let numOfUsersOnline = numOfUsers["Online"], let numOfUsersOffline = numOfUsers["Offline"] else {
+            return
+        }
+        for _ in 1...numOfUsersOnline - 1 {
             let dummyName = generateRandomStringWithLength(length: Int(arc4random_uniform(10) + 1))
             let dummyMessage = generateRandomStringWithLength(length: Int(arc4random_uniform(50) + 1))
             let dummyDate = generateRandomDate()
@@ -36,7 +38,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
             dummyConversations.append(dummyConversationsListCellData(name: dummyName, message: dummyMessage, date: dummyDate, online: dummyOnline, hasUnreadMessages: dummyHasUnreadMessages))
         }
         
-        for _ in 0...numOfUsers["Offline"]! - 1 {
+        for _ in 0...numOfUsersOffline - 1 {
             let dummyName = generateRandomStringWithLength(length: Int(arc4random_uniform(10) + 1))
             let dummyMessage = generateRandomStringWithLength(length: Int(arc4random_uniform(50) + 1))
             let dummyDate = generateRandomDate()
@@ -59,27 +61,31 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let numOfUsersOnline = numOfUsers["Online"], let numOfUsersOffline = numOfUsers["Offline"] else {
+            return 0
+        }
         if section == 0 {
-            return numOfUsers["Online"]!
+            return numOfUsersOnline
         } else {
-            return numOfUsers["Offline"]!
+            return numOfUsersOffline
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let identifier = "Conversation Cell ID"
         var cell : ConversationsListCell
-        if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as! ConversationsListCell? {
+        if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as? ConversationsListCell {
             cell = dequeuedCell
         } else {
-            cell = UITableViewCell(style: .default, reuseIdentifier: identifier) as! ConversationsListCell
+            cell = ConversationsListCell(style: .default, reuseIdentifier: identifier)
         }
         
         var conversation : dummyConversationsListCellData
         if indexPath.section == 0 {
             conversation = dummyConversations[indexPath.row]
         } else {
-            conversation = dummyConversations[numOfUsers["Online"]! + indexPath.row]
+            let numOfUsersOnline = numOfUsers["Online"] ?? 0
+            conversation = dummyConversations[numOfUsersOnline + indexPath.row]
         }
 
         cell.name = conversation.name

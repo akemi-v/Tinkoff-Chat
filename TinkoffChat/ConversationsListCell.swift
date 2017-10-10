@@ -70,15 +70,19 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
         }
         set {
             _date = newValue
-            let dateFormatter = DateFormatter()
-            if Calendar.current.isDateInToday(_date!) {
-                dateFormatter.dateFormat = "HH:mm"
+            if let trueDate = _date {
+                let dateFormatter = DateFormatter()
+                if Calendar.current.isDateInToday(trueDate) {
+                    dateFormatter.dateFormat = "HH:mm"
+                } else {
+                    dateFormatter.dateFormat = "dd MMM"
+                }
+                let stringDate : String = dateFormatter.string(from: trueDate)
+                
+                self.timeLabel.text = stringDate
             } else {
-                dateFormatter.dateFormat = "dd MMM"
+                return
             }
-            let stringDate : String = dateFormatter.string(from: _date!)
-
-            self.timeLabel.text = stringDate
         }
     }
     

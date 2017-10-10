@@ -51,10 +51,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         let message = self.dummyMessages[indexPath.row]
         let identifier = message.identifier ?? "Incoming Message Cell ID"
         var cell : MessageCell
-        if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as! MessageCell? {
+        if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as? MessageCell {
             cell = dequeuedCell
         } else {
-            cell = UITableViewCell(style: .default, reuseIdentifier: identifier) as! MessageCell
+            cell = MessageCell(style: .default, reuseIdentifier: identifier)
         }
         
         switch identifier {
