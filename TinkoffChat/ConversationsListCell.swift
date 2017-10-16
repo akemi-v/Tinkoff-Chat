@@ -53,14 +53,6 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
                 self.lastMessageLabel.textColor = UIColor .gray
                 self.lastMessageLabel.font = UIFont.italicSystemFont(ofSize: 17.0)
             }
-//            if newValue != nil {
-//                _message = newValue
-//                updateFontFormatting()
-//            } else {
-//                _message = "No messages yet"
-//                updateFontFormatting()
-//            }
-//            self.lastMessageLabel.text = _message
         }
     }
     

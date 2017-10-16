@@ -13,6 +13,8 @@
 		184D166E1F72C9D400BBF892 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 184D166D1F72C9D400BBF892 /* Assets.xcassets */; };
 		184D16711F72C9D400BBF892 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 184D166F1F72C9D400BBF892 /* LaunchScreen.storyboard */; };
 		184D16791F72D1A900BBF892 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 184D16781F72D1A800BBF892 /* Media.xcassets */; };
+		186174E01F923CC10003FCE3 /* MultithreadedDataManagers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186174DF1F923CC10003FCE3 /* MultithreadedDataManagers.swift */; };
+		186174E61F937CA40003FCE3 /* UITextViewFixed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186174E51F937CA40003FCE3 /* UITextViewFixed.swift */; };
 		186D44171F867971001415FE /* ConversationsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186D44161F867971001415FE /* ConversationsListViewController.swift */; };
 		186D44191F8683A9001415FE /* ConversationsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186D44181F8683A9001415FE /* ConversationsListCell.swift */; };
 		18D079C61F89AD48003E45E4 /* DummyConversationsListCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D079C51F89AD48003E45E4 /* DummyConversationsListCellData.swift */; };
@@ -30,6 +32,8 @@
 		184D16701F72C9D400BBF892 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		184D16721F72C9D400BBF892 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		184D16781F72D1A800BBF892 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		186174DF1F923CC10003FCE3 /* MultithreadedDataManagers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadedDataManagers.swift; sourceTree = "<group>"; };
+		186174E51F937CA40003FCE3 /* UITextViewFixed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextViewFixed.swift; sourceTree = "<group>"; };
 		186D44161F867971001415FE /* ConversationsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListViewController.swift; sourceTree = "<group>"; };
 		186D44181F8683A9001415FE /* ConversationsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListCell.swift; sourceTree = "<group>"; };
 		18D079C51F89AD48003E45E4 /* DummyConversationsListCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyConversationsListCellData.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				184D16661F72C9D400BBF892 /* AppDelegate.swift */,
+				186174DF1F923CC10003FCE3 /* MultithreadedDataManagers.swift */,
 				184D16681F72C9D400BBF892 /* ProfileViewController.swift */,
 				186D44161F867971001415FE /* ConversationsListViewController.swift */,
 				18D079C51F89AD48003E45E4 /* DummyConversationsListCellData.swift */,
@@ -81,6 +86,7 @@
 				184D166D1F72C9D400BBF892 /* Assets.xcassets */,
 				184D166F1F72C9D400BBF892 /* LaunchScreen.storyboard */,
 				184D16721F72C9D400BBF892 /* Info.plist */,
+				186174E51F937CA40003FCE3 /* UITextViewFixed.swift */,
 			);
 			path = TinkoffChat;
 			sourceTree = "<group>";
@@ -162,6 +168,8 @@
 			files = (
 				186D44191F8683A9001415FE /* ConversationsListCell.swift in Sources */,
 				18D079C61F89AD48003E45E4 /* DummyConversationsListCellData.swift in Sources */,
+				186174E61F937CA40003FCE3 /* UITextViewFixed.swift in Sources */,
+				186174E01F923CC10003FCE3 /* MultithreadedDataManagers.swift in Sources */,
 				18D079C81F89CA87003E45E4 /* ConversationViewController.swift in Sources */,
 				18D079D01F8AC6F9003E45E4 /* DummyConversationCellData.swift in Sources */,
 				184D16691F72C9D400BBF892 /* ProfileViewController.swift in Sources */,
