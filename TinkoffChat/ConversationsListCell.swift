@@ -9,6 +9,7 @@
 import UIKit
 
 protocol ConversationCellConfiguration : class {
+    var ID : String? {get set}
     var name : String? {get set}
     var message : String? {get set}
     var date : Date? {get set}
@@ -22,11 +23,22 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var lastMessageLabel: UILabel!
     
+    private var _ID : String? = nil
     private var _name : String? = nil
     private var _message : String? = nil
     private var _date : Date? = nil
     private var _online : Bool = false
     private var _hasUnreadMessages : Bool = false
+    private var _lastIncoming : Bool = true
+    
+    var ID: String? {
+        get {
+            return _ID
+        }
+        set {
+            _ID = newValue
+        }
+    }
     
     var name: String? {
         get {
@@ -73,7 +85,7 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
                 
                 self.timeLabel.text = stringDate
             } else {
-                return
+                self.timeLabel.text = "--:--"
             }
         }
     }
@@ -105,6 +117,15 @@ class ConversationsListCell: UITableViewCell, ConversationCellConfiguration {
             } else {
                 self.lastMessageLabel.font = UIFont.italicSystemFont(ofSize: 17.0)
             }
+        }
+    }
+    
+    var lastIncoming: Bool {
+        get {
+            return _lastIncoming
+        }
+        set {
+            _lastIncoming = newValue
         }
     }
 

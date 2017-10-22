@@ -7,67 +7,61 @@
 //
 
 import UIKit
+import MultipeerConnectivity
 
-class ConversationsListViewController: UIViewController, UITableViewDataSource {
+class ConversationsListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
+    let communicator = MultipeerCommunicator.shared
+    let manager = CommunicationManager.shared
+    
     let sectionsHeaders = ["Online", "History"]
+        
+    var conversations : [ConversationsListCellData] = []
+    var conversationMessages : [String: [ConversationCellData]] = [:]
     
-    let numOfUsers : [String: Int] = ["Online": 10, "Offline": 10]
-    
-    var dummyConversations : [dummyConversationsListCellData] = []
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.tableView.dataSource = self
+        self.tableView.delegate = self
         
         self.tableView.estimatedRowHeight = 144
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
-        dummyConversations.append(dummyConversationsListCellData(name: "Нерандом", message: nil, date: Date(), online: true, hasUnreadMessages: false))
-        guard let numOfUsersOnline = numOfUsers["Online"], let numOfUsersOffline = numOfUsers["Offline"] else {
-            return
-        }
-        for _ in 1...numOfUsersOnline - 1 {
-            let dummyName = generateRandomStringWithLength(length: Int(arc4random_uniform(10) + 1))
-            let dummyMessage = generateRandomStringWithLength(length: Int(arc4random_uniform(50) + 1))
-            let dummyDate = generateRandomDate()
-            let dummyOnline = true
-            let dummyHasUnreadMessages = generateRandomBool()
-            dummyConversations.append(dummyConversationsListCellData(name: dummyName, message: dummyMessage, date: dummyDate, online: dummyOnline, hasUnreadMessages: dummyHasUnreadMessages))
-        }
-        
-        for _ in 0...numOfUsersOffline - 1 {
-            let dummyName = generateRandomStringWithLength(length: Int(arc4random_uniform(10) + 1))
-            let dummyMessage = generateRandomStringWithLength(length: Int(arc4random_uniform(50) + 1))
-            let dummyDate = generateRandomDate()
-            let dummyOnline = false
-            let dummyHasUnreadMessages = generateRandomBool()
-            dummyConversations.append(dummyConversationsListCellData(name: dummyName, message: dummyMessage, date: dummyDate, online: dummyOnline, hasUnreadMessages: dummyHasUnreadMessages))
-        }
+        manager.conversationsListVC = self
 
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive(notification:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let index = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: index, animated: true)
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    @objc func applicationWillResignActive(notification: NSNotification) {
+        self.conversations.removeAll()
+    }
+    
     // MARK: - UITableView DataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.sectionsHeaders.count
+//        return self.sectionsHeaders.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let numOfUsersOnline = numOfUsers["Online"], let numOfUsersOffline = numOfUsers["Offline"] else {
-            return 0
-        }
         if section == 0 {
-            return numOfUsersOnline
+            return conversations.count
         } else {
-            return numOfUsersOffline
+            return 0
         }
     }
     
@@ -80,20 +74,13 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
             cell = ConversationsListCell(style: .default, reuseIdentifier: identifier)
         }
         
-        var conversation : dummyConversationsListCellData
-        if indexPath.section == 0 {
-            conversation = dummyConversations[indexPath.row]
-        } else {
-            let numOfUsersOnline = numOfUsers["Online"] ?? 0
-            conversation = dummyConversations[numOfUsersOnline + indexPath.row]
-        }
-
-        cell.name = conversation.name
-        cell.message = conversation.message
-        cell.date = conversation.date
-        cell.online = conversation.online
-        cell.hasUnreadMessages = conversation.hasUnreadMessages
-        
+        cell.ID = conversations[indexPath.row].ID
+        cell.name = conversations[indexPath.row].name
+        cell.date = conversations[indexPath.row].date
+        cell.message = conversations[indexPath.row].message
+        cell.hasUnreadMessages = conversations[indexPath.row].hasUnreadMessages
+        cell.lastIncoming = conversations[indexPath.row].lastIncoming
+        cell.online = conversations[indexPath.row].online
         
         return cell
     }
@@ -101,8 +88,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sectionsHeaders[section]
     }
-    
-    
+
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -110,10 +96,33 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        guard let cell : ConversationsListCell = sender as? ConversationsListCell else {
-            return
+        guard let cell : ConversationsListCell = sender as? ConversationsListCell else { return }
+        guard let destinationVC = segue.destination as? ConversationViewController else { return }
+        
+        cell.hasUnreadMessages  = false
+        
+        destinationVC.title = cell.name
+        destinationVC.userId = cell.ID
+        
+        guard let cellID = cell.ID else { return }
+        
+        if conversationMessages[cellID] == nil {
+            conversationMessages[cellID] = []
         }
-        segue.destination.title = cell.name
+        
+        if var messages = conversationMessages[cellID] {
+            if messages.count > 0 {
+                messages.remove(at: 0)
+                conversationMessages[cellID] = messages
+            }
+            if cell.lastIncoming {
+                messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: cell.message), at: 0)
+                conversationMessages[cellID] = messages
+            } else {
+                messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: cell.message), at: 0)
+                conversationMessages[cellID] = messages
+            }
+        }
     }
     
 }

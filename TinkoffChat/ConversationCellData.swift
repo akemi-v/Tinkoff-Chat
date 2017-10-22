@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct dummyConversationCellData {
+struct ConversationCellData {
     var identifier : String?
     var textMessage : String?
     
