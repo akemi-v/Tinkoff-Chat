@@ -177,7 +177,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, -keyboardSize.height, 0.0)
         self.scrollView.contentInset = contentInsets
         self.scrollView.scrollIndicatorInsets = contentInsets
-        self.view.endEditing(true)
         self.scrollView.isScrollEnabled = false
     }
     

@@ -32,14 +32,7 @@ class CommunicationManager: NSObject, CommunicatorDelegate {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "notificationInfoUser"), object: true)
         
         self.conversationsListVC?.conversations.append(ConversationsListCellData(ID: userID, name: userName, message: nil, date: nil, online: true, hasUnreadMessages: false, lastIncoming: true))
-        
-//        self.conversationsListVC?.conversations.sort(by: {
-//            if $0.date ?? Date(timeIntervalSince1970: 0) != $1.date ?? Date(timeIntervalSince1970: 0) {
-//                return $0.date ?? Date(timeIntervalSince1970: 0) > $1.date ?? Date(timeIntervalSince1970: 0)
-//            } else {
-//                return $0.name?.lowercased() ?? "" < $1.name?.lowercased() ?? ""
-//            }
-//        })
+
         if let sortedConversations = sortConversationsListByDateThenName(conversations: self.conversationsListVC?.conversations) {
             self.conversationsListVC?.conversations = sortedConversations
         }

@@ -70,8 +70,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.nameTextField.delegate = self
         self.aboutTextView.delegate = self
         
+//        self.activeTextView?.delegate = self
+//        self.activeTextField?.delegate = self
+        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
+//        self.scrollView.keyboardDismissMode = .onDrag
     }
     
     @objc func goBack(){
@@ -258,9 +263,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, -keyboardSize.height, 0.0)
         self.scrollView.contentInset = contentInsets
         self.scrollView.scrollIndicatorInsets = contentInsets
-        self.view.endEditing(true)
         self.scrollView.isScrollEnabled = false
     }
+    
+    // MARK: - UITextField delegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
@@ -273,6 +279,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func textFieldDidEndEditing(_ textField: UITextField){
         activeTextField = nil
     }
+    
+    
+    
+    // MARK: - UITextView delegate
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         activeTextView = textView
