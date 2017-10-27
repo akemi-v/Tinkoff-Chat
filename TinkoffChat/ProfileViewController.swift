@@ -37,6 +37,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             guard let profilePicStrBase64 = data["pic"] else { return }
             guard let dataDecoded : Data = Data(base64Encoded: profilePicStrBase64, options: .ignoreUnknownCharacters) else { return }
             let decodedimage = UIImage(data: dataDecoded)
+            self?.profilePicImageView.contentMode = .scaleAspectFit
             self?.profilePicImageView.image = decodedimage
         }
         GCDDataManager(url: urlForProfileData()).loadProfileData(setLoadedData: setLoadedData)
@@ -70,13 +71,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.nameTextField.delegate = self
         self.aboutTextView.delegate = self
         
-//        self.activeTextView?.delegate = self
-//        self.activeTextField?.delegate = self
-        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
-//        self.scrollView.keyboardDismissMode = .onDrag
     }
     
     @objc func goBack(){
@@ -193,7 +189,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK: - Saving data
     
-    @IBAction func generalSaveData(_ sender: UIButton) {
+    @IBAction func gcdSaveData(_ sender: UIButton) {
         self.savingDataActivityIndicator.startAnimating()
         disableSaveButtons()
         
@@ -215,22 +211,46 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
             let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
-                self?.generalSaveData(sender)
+                self?.gcdSaveData(sender)
             })
             alertMessageController.addAction(okAction)
             alertMessageController.addAction(retryAction)
             self?.present(alertMessageController, animated: true, completion: nil)
         }
         
-        guard let method : String = sender.titleLabel?.text else { return }
-        switch method {
-        case "GCD":
-            GCDDataManager(url: urlForProfileData()).saveProfileData(profileData: profileData, success: success, failure: failure)
-        case "Operation":
-            OperationDataManager(url: urlForProfileData()).saveProfileData(profileData: profileData, success: success, failure: failure)
-        default:
-            return
+        GCDDataManager(url: urlForProfileData()).saveProfileData(profileData: profileData, success: success, failure: failure)
+    }
+    
+    @IBAction func operationSaveData(_ sender: UIButton) {
+        self.savingDataActivityIndicator.startAnimating()
+        disableSaveButtons()
+        
+        guard let image = self.profilePicImageView?.image else { return }
+        guard let profilePicData : NSData = UIImagePNGRepresentation(image) as NSData? else { return }
+        let profilePicStrBase64 : String = profilePicData.base64EncodedString(options: .lineLength64Characters)
+        let profileData : [String: String] = ["name": self.nameTextField.text ?? "", "about": self.aboutTextView.text, "pic": profilePicStrBase64]
+        
+        let success = { [weak self] in
+            self?.savingDataActivityIndicator.stopAnimating()
+            let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+            alertMessageController.addAction(okAction)
+            self?.present(alertMessageController, animated: true, completion: nil)
         }
+        
+        let failure = { [ weak self] in
+            self?.savingDataActivityIndicator.stopAnimating()
+            let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+            let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
+                self?.operationSaveData(sender)
+            })
+            alertMessageController.addAction(okAction)
+            alertMessageController.addAction(retryAction)
+            self?.present(alertMessageController, animated: true, completion: nil)
+        }
+        
+        OperationDataManager(url: urlForProfileData()).saveProfileData(profileData: profileData, success: success, failure: failure)
     }
     
     // MARK: - Keyboard related

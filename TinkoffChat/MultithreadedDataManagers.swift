@@ -50,7 +50,7 @@ class GCDDataManager : ProfileDataManagementProtocol {
     
     func loadProfileData(setLoadedData: @escaping ([String: String]) -> ()) {
         
-        let queue = DispatchQueue.global(qos: .userInitiated)
+        let queue = DispatchQueue.global(qos: .utility)
         queue.async {
             guard let url = self.url else { return }
             do {
@@ -83,7 +83,6 @@ class OperationDataManager : ProfileDataManagementProtocol {
     
     func saveProfileData(profileData: [String: String], success: @escaping () -> (), failure: @escaping () -> ()) {
         let queue = OperationQueue()
-        queue.qualityOfService = .userInitiated
         
         guard let url = self.url else { return }
         let saveOperation : AsyncOperation = AsyncOperation(data: profileData, saveData: true, url: url, success: success, failure: failure)
@@ -92,7 +91,7 @@ class OperationDataManager : ProfileDataManagementProtocol {
     
     func loadProfileData(setLoadedData: @escaping ([String: String]) -> ()) {
         let queue = OperationQueue()
-        queue.qualityOfService = .userInitiated
+        queue.qualityOfService = .utility
         
         guard let url = self.url else { return }
         let loadOperation : AsyncOperation = AsyncOperation(saveData: false, url: url, setLoadedData: setLoadedData)

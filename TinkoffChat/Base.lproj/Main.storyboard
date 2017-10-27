@@ -91,7 +91,7 @@
                                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="generalSaveData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="was-tN-VGI"/>
+                                                            <action selector="gcdSaveData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bgW-Mp-v1g"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JD9-20-Nwd">
@@ -104,7 +104,7 @@
                                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="generalSaveData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3cM-lY-7zz"/>
+                                                            <action selector="operationSaveData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Dhv-mb-cbq"/>
                                                         </connections>
                                                     </button>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Maria Semakova" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="c9V-0x-l9V">
