@@ -58,12 +58,11 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "messagesUpdated"), object: nil)
         
-        guard let parentVC = manager.conversationsListVC else { return }
-        for (index, conversation) in parentVC.conversations.enumerated() {
+        manager.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
             if userId == conversation.ID {
-                parentVC.conversations[index].hasUnreadMessages = false
+                manager.conversationsListVC?.conversations[index].hasUnreadMessages = false
             }
-        }
+        })
         
         super.viewWillDisappear(animated)
 
@@ -122,6 +121,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     // MARK: – Actions
     
     @IBAction func pressSendButton(_ sender: UIButton) {
+        guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else { return }
         guard let userIdUnwrapped = userId else { return }
         if var messages = manager.conversationsListVC?.conversationMessages[userIdUnwrapped] {
             messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: messageField.text), at: 0)
@@ -129,23 +129,24 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         }
         
         communicator.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
-        guard let parentVC = manager.conversationsListVC else { return }
-        for (index, conversation) in parentVC.conversations.enumerated() {
-            if userId == conversation.ID {
-                parentVC.conversations[index].hasUnreadMessages = false
-                parentVC.conversations[index].message = messageField.text
-                parentVC.conversations[index].date = Date()
-                parentVC.conversations[index].lastIncoming = false
-            }
-        }
         
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: parentVC.conversations) {
-            parentVC.conversations = sortedConversations
+        manager.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+            if userId == conversation.ID {
+                manager.conversationsListVC?.conversations[index].hasUnreadMessages = false
+                manager.conversationsListVC?.conversations[index].message = messageField.text
+                manager.conversationsListVC?.conversations[index].date = Date()
+                manager.conversationsListVC?.conversations[index].lastIncoming = false
+            }
+
+        })
+        
+        if let sortedConversations = sortConversationsListByDateThenName(conversations: manager.conversationsListVC?.conversations) {
+            manager.conversationsListVC?.conversations = sortedConversations
         }
         
         DispatchQueue.main.async {
             self.messageField.text = ""
-            parentVC.tableView.reloadData()
+            self.manager.conversationsListVC?.tableView.reloadData()
             self.tableView.reloadData()
         }
     }
@@ -191,16 +192,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     @objc func enableSendButton(_ notification: Notification) {
         DispatchQueue.main.async {

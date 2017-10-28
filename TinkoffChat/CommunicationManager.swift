@@ -45,14 +45,12 @@ class CommunicationManager: NSObject, CommunicatorDelegate {
     func didLostUser(userID: String) {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "notificationInfoUser"), object: false)
         
-        if let enumConversations = self.conversationsListVC?.conversations.enumerated() {
-            for (index, conversation) in enumConversations {
-                if userID == conversation.ID {
-                    self.conversationsListVC?.conversations.remove(at: index)
-                    break
-                }
+        self.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+            if userID == conversation.ID {
+                self.conversationsListVC?.conversations.remove(at: index)
+                return
             }
-        }
+        })
         
         DispatchQueue.main.async {
             self.conversationsListVC?.tableView.reloadData()
@@ -66,18 +64,17 @@ class CommunicationManager: NSObject, CommunicatorDelegate {
     func failedToStartAdvertising(error: Error) {
         
     }
-    
+
     func didReceiveMessage(text: String, fromUser: String, toUser: String) {
-        guard let conversations = self.conversationsListVC?.conversations.enumerated() else { return }
         
-        for (index, conversation) in conversations {
+        self.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
             if fromUser == conversation.ID {
                 self.conversationsListVC?.conversations[index].message = text
                 self.conversationsListVC?.conversations[index].date = Date()
                 self.conversationsListVC?.conversations[index].hasUnreadMessages = true
                 self.conversationsListVC?.conversations[index].lastIncoming = true
             }
-        }
+        })
         
         if self.conversationsListVC?.conversationMessages[fromUser] == nil {
             self.conversationsListVC?.conversationMessages[fromUser] = []

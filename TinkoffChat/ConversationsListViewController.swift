@@ -108,21 +108,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         
         if conversationMessages[cellID] == nil {
             conversationMessages[cellID] = []
-        }
-        
-        if var messages = conversationMessages[cellID] {
-            if messages.count > 0 {
-                messages.remove(at: 0)
-                conversationMessages[cellID] = messages
-            }
-            if cell.lastIncoming {
-                messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: cell.message), at: 0)
-                conversationMessages[cellID] = messages
-            } else {
-                messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: cell.message), at: 0)
-                conversationMessages[cellID] = messages
-            }
+            cell.lastIncoming = false
         }
     }
-    
 }
