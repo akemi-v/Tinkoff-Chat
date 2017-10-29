@@ -13,13 +13,11 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
 
     @IBOutlet weak var tableView: UITableView!
     
-    let communicator = MultipeerCommunicator.shared
-    let manager = CommunicationManager.shared
+    var manager = CommunicationManager()
     
     let sectionsHeaders = ["Online", "History"]
         
     var conversations : [ConversationsListCellData] = []
-    var conversationMessages : [String: [ConversationCellData]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +28,10 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         self.tableView.estimatedRowHeight = 144
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
-        manager.conversationsListVC = self
-
+        manager.conversationsListDelegate = self
+        
+        reloadData()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive(notification:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
     
@@ -39,6 +39,8 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         if let index = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: index, animated: true)
         }
+        
+        reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -47,7 +49,8 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     }
     
     @objc func applicationWillResignActive(notification: NSNotification) {
-        self.conversations.removeAll()
+        manager.conversations.removeAll()
+        reloadData()
     }
     
     // MARK: - UITableView DataSource
@@ -103,12 +106,17 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         
         destinationVC.title = cell.name
         destinationVC.userId = cell.ID
-        
-        guard let cellID = cell.ID else { return }
-        
-        if conversationMessages[cellID] == nil {
-            conversationMessages[cellID] = []
-            cell.lastIncoming = false
+        destinationVC.manager = manager
+    }
+}
+
+// MARK: - CommunicationManagerDelegate
+
+extension ConversationsListViewController: CommunicationManagerDelegate {
+    func reloadData() {
+        conversations = manager.conversations
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
 }

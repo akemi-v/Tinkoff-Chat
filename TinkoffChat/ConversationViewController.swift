@@ -19,10 +19,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     
     var activeTextField : UITextField?
     
-    let communicator = MultipeerCommunicator.shared
-    let manager = CommunicationManager.shared
+    var manager = CommunicationManager()
     
     var userId: String? = nil
+    var messages: [ConversationCellData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,38 +32,36 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         tableView.estimatedRowHeight = 144
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorStyle = .none
-
         tableView.transform = CGAffineTransform(rotationAngle: -.pi);
+        
+        manager.conversationDelegate = self
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tap)
         
         messageField.autocapitalizationType = .sentences;
+        messageField.addTarget(self, action: #selector(checkInput), for: .editingChanged)
+        
+        enableSendButton(enable: false)
+        
+        reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(enableSendButton), name: NSNotification.Name(rawValue: "notificationInfoUser"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updateTable), name: NSNotification.Name(rawValue: "messagesUpdated"), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "notificationInfoUser"), object: nil)
-        
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "messagesUpdated"), object: nil)
-        
-        manager.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+        manager.conversations.enumerated().forEach({ (index, conversation) in
             if userId == conversation.ID {
-                manager.conversationsListVC?.conversations[index].hasUnreadMessages = false
+                manager.conversations[index].hasUnreadMessages = false
             }
         })
-        
+                
         super.viewWillDisappear(animated)
 
     }
@@ -80,15 +78,11 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let userIdUnwrapped = userId else { return 0 }
-        guard let messages = manager.conversationsListVC?.conversationMessages[userIdUnwrapped] else { return 0 }
-        
         return messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let userIdUnwrapped = userId else { return MessageCell() }
-        guard let message = manager.conversationsListVC?.conversationMessages[userIdUnwrapped]?[indexPath.row] else { return MessageCell() }
+        let message = messages[indexPath.row]
         let identifier = message.identifier ?? "Incoming Message Cell ID"
         var cell : MessageCell
         if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as? MessageCell {
@@ -111,9 +105,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         
         if let text = message.textMessage {
             cell.textMessageLabel.text = text
-        } else {
-            cell.isHidden = true
         }
+
         cell.transform = CGAffineTransform(rotationAngle: .pi)
         return cell
     }
@@ -123,32 +116,28 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     @IBAction func pressSendButton(_ sender: UIButton) {
         guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else { return }
         guard let userIdUnwrapped = userId else { return }
-        if var messages = manager.conversationsListVC?.conversationMessages[userIdUnwrapped] {
-            messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: messageField.text), at: 0)
-            manager.conversationsListVC?.conversationMessages[userIdUnwrapped] = messages
-        }
+        messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: messageField.text), at: 0)
+        manager.conversationMessages[userIdUnwrapped] = messages
         
-        communicator.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
+        manager.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
         
-        manager.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+        manager.conversations.enumerated().forEach({ (index, conversation) in
             if userId == conversation.ID {
-                manager.conversationsListVC?.conversations[index].hasUnreadMessages = false
-                manager.conversationsListVC?.conversations[index].message = messageField.text
-                manager.conversationsListVC?.conversations[index].date = Date()
-                manager.conversationsListVC?.conversations[index].lastIncoming = false
+                manager.conversations[index].hasUnreadMessages = false
+                manager.conversations[index].message = messageField.text
+                manager.conversations[index].date = Date()
+                manager.conversations[index].lastIncoming = false
             }
 
         })
         
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: manager.conversationsListVC?.conversations) {
-            manager.conversationsListVC?.conversations = sortedConversations
+        if let sortedConversations = sortConversationsListByDateThenName(conversations: manager.conversations) {
+            manager.conversations = sortedConversations
         }
         
-        DispatchQueue.main.async {
-            self.messageField.text = ""
-            self.manager.conversationsListVC?.tableView.reloadData()
-            self.tableView.reloadData()
-        }
+        self.messageField.text = ""
+        enableSendButton(enable: false)
+        reloadData()
     }
     
     
@@ -181,30 +170,44 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         self.scrollView.isScrollEnabled = false
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        activeTextField = textField
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField){
-        activeTextField = nil
-    }
-    
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
     }
     
-    @objc func enableSendButton(_ notification: Notification) {
-        DispatchQueue.main.async {
-            if let enable: Bool = notification.object as? Bool {
-                self.sendMessageButton.isEnabled = enable
+    // MARK: - Message field
+    
+    @objc func checkInput(_ textField: UITextField) {
+        if let text = textField.text {
+            if text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty {
+                enableSendButton(enable: false)
+            } else {
+                enableSendButton(enable: true)
             }
+        } else {
+            enableSendButton(enable: false)
         }
     }
-    
-    @objc func updateTable() {
+}
+
+// MARK: - CommunicationManagerDelegate
+
+extension ConversationViewController: CommunicationManagerDelegate {
+    @objc func reloadData() {
+        guard let unwrappedUserId = userId else { return }
+        guard let conversationMessages = manager.conversationMessages[unwrappedUserId] else { return }
+        messages = conversationMessages
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
+}
 
+// MARK: - CommunicationManagerConversationDelegate
+
+extension ConversationViewController: CommunicationManagerConversationDelegate {
+    func enableSendButton(enable: Bool) {
+        DispatchQueue.main.async {
+            self.sendMessageButton.isEnabled = enable
+        }
+    }
 }

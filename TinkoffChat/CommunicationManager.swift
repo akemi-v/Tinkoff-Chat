@@ -21,40 +21,55 @@ protocol CommunicatorDelegate : class {
     func didReceiveMessage(text: String, fromUser: String, toUser: String)
 }
 
-class CommunicationManager: NSObject, CommunicatorDelegate {
-    
-    static let shared = CommunicationManager()
-    
-    weak var conversationsListVC : ConversationsListViewController?
-    weak var conversationVC : ConversationViewController?
-    
-    func didFoundUser(userID: String, userName: String?) {
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "notificationInfoUser"), object: true)
-        
-        self.conversationsListVC?.conversations.append(ConversationsListCellData(ID: userID, name: userName, message: nil, date: nil, online: true, hasUnreadMessages: false, lastIncoming: true))
+protocol CommunicationManagerDelegate : class {
+    func reloadData()
+}
 
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: self.conversationsListVC?.conversations) {
-            self.conversationsListVC?.conversations = sortedConversations
-        }
-            
-        DispatchQueue.main.async {
-            self.conversationsListVC?.tableView.reloadData()
-        }
+protocol CommunicationManagerConversationDelegate : class {
+    func enableSendButton(enable: Bool)
+}
+
+class CommunicationManager: CommunicatorDelegate {
+    
+    private var communicator = MultipeerCommunicator()
+
+    var conversations : [ConversationsListCellData] = []
+    var conversationMessages : [String: [ConversationCellData]] = [:]
+    
+    weak var conversationsListDelegate : CommunicationManagerDelegate?
+    weak var conversationDelegate : (CommunicationManagerDelegate & CommunicationManagerConversationDelegate)?
+    
+    init() {
+        communicator.delegate = self
     }
     
-    func didLostUser(userID: String) {
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "notificationInfoUser"), object: false)
+    func didFoundUser(userID: String, userName: String?) {
+        conversations.append(ConversationsListCellData(ID: userID, name: userName, message: nil, date: nil, online: true, hasUnreadMessages: false, lastIncoming: true))
+
+        if let sortedConversations = sortConversationsListByDateThenName(conversations: conversations) {
+            conversations = sortedConversations
+        }
         
-        self.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+        if conversationMessages[userID] == nil {
+            conversationMessages[userID] = []
+        }
+        
+        self.conversationDelegate?.enableSendButton(enable: true)
+        self.conversationsListDelegate?.reloadData()
+    }
+    
+    func didLostUser(userID: String) {        
+        conversations.enumerated().forEach({ (index, conversation) in
             if userID == conversation.ID {
-                self.conversationsListVC?.conversations.remove(at: index)
+                conversations.remove(at: index)
                 return
             }
         })
         
-        DispatchQueue.main.async {
-            self.conversationsListVC?.tableView.reloadData()
-        }
+        conversationMessages[userID] = []
+        
+        self.conversationDelegate?.enableSendButton(enable: false)
+        self.conversationsListDelegate?.reloadData()
     }
     
     func failedToStartBrowsingForUsers(error: Error) {
@@ -67,33 +82,34 @@ class CommunicationManager: NSObject, CommunicatorDelegate {
 
     func didReceiveMessage(text: String, fromUser: String, toUser: String) {
         
-        self.conversationsListVC?.conversations.enumerated().forEach({ (index, conversation) in
+        conversations.enumerated().forEach({ (index, conversation) in
             if fromUser == conversation.ID {
-                self.conversationsListVC?.conversations[index].message = text
-                self.conversationsListVC?.conversations[index].date = Date()
-                self.conversationsListVC?.conversations[index].hasUnreadMessages = true
-                self.conversationsListVC?.conversations[index].lastIncoming = true
+                conversations[index].message = text
+                conversations[index].date = Date()
+                conversations[index].hasUnreadMessages = true
+                conversations[index].lastIncoming = true
             }
         })
         
-        if self.conversationsListVC?.conversationMessages[fromUser] == nil {
-            self.conversationsListVC?.conversationMessages[fromUser] = []
+        if conversationMessages[fromUser] == nil {
+            conversationMessages[fromUser] = []
         }
         
-        if var messages = self.conversationsListVC?.conversationMessages[fromUser] {
+        if var messages = conversationMessages[fromUser] {
             messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: text), at: 0)
-            self.conversationsListVC?.conversationMessages[fromUser] = messages
+            conversationMessages[fromUser] = messages
+        }
+                
+        if let sortedConversations = sortConversationsListByDateThenName(conversations: conversations) {
+            conversations = sortedConversations
         }
         
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "messagesUpdated"), object: nil)
-        
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: self.conversationsListVC?.conversations) {
-            self.conversationsListVC?.conversations = sortedConversations
-        }
-        
-        DispatchQueue.main.async {
-            self.conversationsListVC?.tableView.reloadData()
-        }
+        self.conversationsListDelegate?.reloadData()
+        self.conversationDelegate?.reloadData()
+    }
+    
+    func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?) {
+        communicator.sendMessage(string: string, to: userID, completionHandler: completionHandler)
     }
     
 }

@@ -21,9 +21,7 @@ class MultipeerCommunicator: NSObject, Communicator {
     var browser : MCNearbyServiceBrowser!
     var advertiser : MCNearbyServiceAdvertiser!
     
-    static let shared = MultipeerCommunicator()
-    
-    weak var delegate : CommunicatorDelegate? = CommunicationManager.shared
+    weak var delegate : CommunicatorDelegate?
     var online : Bool = true
     
     let tinkoffServiceType = "tinkoff-chat"
