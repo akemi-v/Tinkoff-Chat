@@ -13,11 +13,12 @@ class ConversationsListAssembly {
     func conversationsListViewCotnroller() -> UINavigationController {
         let model = conversationsListModel()
         let storyboard = UIStoryboard(name: "ConversationsList", bundle: nil)
-        let navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
-        let conversationsListVC = navigationController.viewControllers.first as! ConversationsListViewController
-        conversationsListVC.model = model
-        model.delegate = conversationsListVC
-        return navigationController
+        if let navigationController = storyboard.instantiateInitialViewController() as? UINavigationController, let conversationsListVC = navigationController.viewControllers.first as? ConversationsListViewController {
+            conversationsListVC.model = model
+            model.delegate = conversationsListVC
+            return navigationController
+        }
+        return UINavigationController()
     }
     
     // MARK: - PRIVATE SECTION
@@ -26,7 +27,7 @@ class ConversationsListAssembly {
         return ConversationsListModel(communicationService: communicationManager())
     }
     
-    private func communicationManager() -> CommunicatorDelegate {
+    private func communicationManager() -> ICommunicatorDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.rootAssembly.communicationManager
     }

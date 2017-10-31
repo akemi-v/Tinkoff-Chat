@@ -1,5 +1,5 @@
 //
-//  MPCManager.swift
+//  MultipeerCommunicator.swift
 //  TinkoffChat
 //
 //  Created by Maria Semakova on 10/18/17.
@@ -9,24 +9,24 @@
 import UIKit
 import MultipeerConnectivity
 
-protocol Communicator : class {
+protocol ICommunicator : class {
     func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?)
-    weak var delegate : CommunicatorDelegate? {get set}
+    weak var delegate : ICommunicatorDelegate? {get set}
     var online : Bool {get set}
 }
 
-class MultipeerCommunicator: NSObject, Communicator {
+class MultipeerCommunicator: NSObject, ICommunicator {
 
-    var myPeerId : MCPeerID!
-    var browser : MCNearbyServiceBrowser!
-    var advertiser : MCNearbyServiceAdvertiser!
+    private var myPeerId : MCPeerID!
+    private var browser : MCNearbyServiceBrowser!
+    private var advertiser : MCNearbyServiceAdvertiser!
     
-    weak var delegate : CommunicatorDelegate?
+    weak var delegate : ICommunicatorDelegate?
     var online : Bool = true
     
-    let tinkoffServiceType = "tinkoff-chat"
-    let myDiscoveryInfo = ["userName" : "m.a.semakova"]
-    var sessions = [String: MCSession]()
+    private let tinkoffServiceType = "tinkoff-chat"
+    private let myDiscoveryInfo = ["userName" : "m.a.semakova"]
+    private var sessions = [String: MCSession]()
     
     
     override init() {
@@ -65,12 +65,14 @@ class MultipeerCommunicator: NSObject, Communicator {
             completionHandler?(true, nil)
     }
     
-    func generateMessageId() -> String {
+    private func generateMessageId() -> String {
         let string = "\(arc4random_uniform(UINT32_MAX))+\(Date.timeIntervalSinceReferenceDate)+\(arc4random_uniform(UINT32_MAX))".data(using: .utf8)?.base64EncodedString()
         return string!
     }
     
 }
+
+// MARK: - Browser Delegate
 
 extension MultipeerCommunicator : MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
@@ -93,6 +95,8 @@ extension MultipeerCommunicator : MCNearbyServiceBrowserDelegate {
     }
 }
 
+// MARK: - Advertiser Delegate
+
 extension MultipeerCommunicator : MCNearbyServiceAdvertiserDelegate {
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         
@@ -110,6 +114,8 @@ extension MultipeerCommunicator : MCNearbyServiceAdvertiserDelegate {
         delegate?.failedToStartAdvertising(error: error)
     }
 }
+
+// MARK: - Session Delegate
 
 extension MultipeerCommunicator : MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {

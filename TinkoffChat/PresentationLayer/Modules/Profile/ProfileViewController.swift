@@ -19,11 +19,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var aboutTextView: UITextView!
     
-//    var profileManagementService : DataManagementProtocol?
     var model : IProfileModel?
     
-    var activeTextField : UITextField?
-    var activeTextView : UITextView?
+    private var activeTextField : UITextField?
+    private var activeTextView : UITextView?
     
     init(model: IProfileModel) {
         self.model = model
@@ -55,7 +54,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         model?.loadProfileDataGCD(setLoadedData: setLoadedData)
 
-        disableSaveButtons()
+        enableGcdSaveButton(enable: false)
+        enableOperationSaveButton(enable: false)
         
         savingDataActivityIndicator.isHidden = true
         
@@ -191,7 +191,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         if let pickedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             profilePicImageView.contentMode = .scaleAspectFit
             profilePicImageView.image = pickedImage
-            enableSaveButtons()
+            enableGcdSaveButton(enable: true)
+            enableOperationSaveButton(enable: true)
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -204,64 +205,28 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func gcdSaveData(_ sender: UIButton) {
         self.savingDataActivityIndicator.startAnimating()
-        disableSaveButtons()
+        enableGcdSaveButton(enable: false)
+        enableOperationSaveButton(enable: false)
         
-        guard let image = self.profilePicImageView.image else { return }
-        guard let profilePicData : NSData = UIImagePNGRepresentation(image) as NSData? else { return }
-        let profilePicStrBase64 : String = profilePicData.base64EncodedString(options: .lineLength64Characters)
-        let profileData : [String: String] = ["name": self.nameTextField.text ?? "", "about": self.aboutTextView.text, "pic": profilePicStrBase64]
-        
-        let success = { [weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
-            let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
-            alertMessageController.addAction(okAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
-        }
-        
-        let failure = { [ weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
-            let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
-            let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
-                self?.gcdSaveData(sender)
-            })
-            alertMessageController.addAction(okAction)
-            alertMessageController.addAction(retryAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
-        }
+        let profileData : [String: String] = prepareImageForSaving()
+        let success : () -> () = prepareSuccessAlert()
+        let failure = prepareFailureAlert(activateSaving: { [weak self] in
+            self?.savingDataActivityIndicator.startAnimating()
+            self?.gcdSaveData(sender) })
         
         model?.saveProfileDataGCD(profileData: profileData, success: success, failure: failure)
     }
     
     @IBAction func operationSaveData(_ sender: UIButton) {
         self.savingDataActivityIndicator.startAnimating()
-        disableSaveButtons()
+        enableGcdSaveButton(enable: false)
+        enableOperationSaveButton(enable: false)
         
-        guard let image = self.profilePicImageView?.image else { return }
-        guard let profilePicData : NSData = UIImagePNGRepresentation(image) as NSData? else { return }
-        let profilePicStrBase64 : String = profilePicData.base64EncodedString(options: .lineLength64Characters)
-        let profileData : [String: String] = ["name": self.nameTextField.text ?? "", "about": self.aboutTextView.text, "pic": profilePicStrBase64]
-        
-        let success = { [weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
-            let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
-            alertMessageController.addAction(okAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
-        }
-        
-        let failure = { [ weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
-            let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
-            let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
-                self?.operationSaveData(sender)
-            })
-            alertMessageController.addAction(okAction)
-            alertMessageController.addAction(retryAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
-        }
+        let profileData : [String: String] = prepareImageForSaving()
+        let success : () -> () = prepareSuccessAlert()
+        let failure = prepareFailureAlert(activateSaving: { [weak self] in
+            self?.savingDataActivityIndicator.startAnimating()
+            self?.operationSaveData(sender) })
         
         model?.saveProfileDataOperation(profileData: profileData, success: success, failure: failure)
     }
@@ -306,13 +271,13 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        enableSaveButtons()
+        enableGcdSaveButton(enable: true)
+        enableOperationSaveButton(enable: true)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField){
         activeTextField = nil
     }
-    
     
     
     // MARK: - UITextView delegate
@@ -322,7 +287,8 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func textViewDidChange(_ textView: UITextView) {
-        enableSaveButtons()
+        enableGcdSaveButton(enable: true)
+        enableOperationSaveButton(enable: true)
     }
         
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -335,25 +301,52 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     // MARK: - Buttons enabling/disabling
     
-    func enableSaveButtons() {
-        self.gcdSaveDataButton.isEnabled = true
-        self.gcdSaveDataButton.alpha = 1.0
-        self.operationSaveDataButton.isEnabled = true
-        self.operationSaveDataButton.alpha = 1.0
+    func enableGcdSaveButton(enable: Bool) {
+        self.gcdSaveDataButton.isEnabled = enable
+        self.gcdSaveDataButton.alpha = enable ? 1.0 : 0.3
     }
     
-    func disableSaveButtons() {
-        self.gcdSaveDataButton.isEnabled = false
-        self.gcdSaveDataButton.alpha = 0.3
-        self.operationSaveDataButton.isEnabled = false
-        self.operationSaveDataButton.alpha = 0.3
+    func enableOperationSaveButton(enable: Bool) {
+        self.operationSaveDataButton.isEnabled = enable
+        self.operationSaveDataButton.alpha = enable ? 1.0 : 0.3
     }
     
-    // MARK: - Auxiliary
+    // MARK: - Private methods
     
-}
-
-extension ProfileViewController : IProfileModelDelegate {
+    private func prepareImageForSaving() -> [String: String] {
+        guard let image = self.profilePicImageView?.image else { return [:] }
+        guard let profilePicData : NSData = UIImagePNGRepresentation(image) as NSData? else { return [:] }
+        let profilePicStrBase64 : String = profilePicData.base64EncodedString(options: .lineLength64Characters)
+        let profileData : [String: String] = ["name": self.nameTextField.text ?? "", "about": self.aboutTextView.text, "pic": profilePicStrBase64]
+        return profileData
+    }
     
+    private func prepareSuccessAlert() -> (() -> ()) {
+        let success = { [weak self] in
+            self?.savingDataActivityIndicator.stopAnimating()
+            let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+            alertMessageController.addAction(okAction)
+            self?.present(alertMessageController, animated: true, completion: nil)
+        }
+        return success
+    }
+    
+    private func prepareFailureAlert(activateSaving: @escaping () -> ()) -> (() -> ()) {
+        let failure = { [ weak self] in
+            self?.savingDataActivityIndicator.stopAnimating()
+            let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ок", style: .default, handler: { [weak self] _ in
+                self?.enableGcdSaveButton(enable: true)
+                self?.enableOperationSaveButton(enable: true)
+            })
+            let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { _ in
+                    activateSaving()
+            })
+            alertMessageController.addAction(okAction)
+            alertMessageController.addAction(retryAction)
+            self?.present(alertMessageController, animated: true, completion: nil)
+        }
+        return failure
+    }
 }
-

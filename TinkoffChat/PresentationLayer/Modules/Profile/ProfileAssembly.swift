@@ -13,13 +13,11 @@ class ProfileAssembly {
     func profileViewCotnroller() -> UINavigationController {
         let model = profileModel()
         let storyboard = UIStoryboard(name: "Profile", bundle: nil)
-        let navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
-        let profileVC = navigationController.viewControllers.first as! ProfileViewController
-        profileVC.model = model
-        model.delegate = profileVC
-        
-        return navigationController
-
+        if let navigationController = storyboard.instantiateInitialViewController() as? UINavigationController, let profileVC = navigationController.viewControllers.first as? ProfileViewController {
+            profileVC.model = model
+            return navigationController
+        }
+        return UINavigationController()
     }
     
     // MARK: - PRIVATE SECTION

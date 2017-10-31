@@ -11,18 +11,11 @@ import Foundation
 class RootAssembly {
     var conversationsListModule: ConversationsListAssembly = ConversationsListAssembly()
     
-    var multipeerCommunicator : Communicator
-    var communicationManager : CommunicatorDelegate
+    var multipeerCommunicator : ICommunicator
+    var communicationManager : ICommunicatorDelegate
     
     init() {
         multipeerCommunicator = MultipeerCommunicator()
         communicationManager = CommunicationManager(communicator: multipeerCommunicator)
     }
-//    private func communicationManager() -> CommunicatorDelegate {
-//        return CommunicationManager(communicator: communicator())
-//    }
-//
-//    private func communicator() -> Communicator {
-//        return MultipeerCommunicator()
-//    }
 }

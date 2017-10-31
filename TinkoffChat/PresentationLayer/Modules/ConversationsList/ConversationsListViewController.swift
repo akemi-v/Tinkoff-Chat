@@ -13,30 +13,16 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
 
     @IBOutlet weak var tableView: UITableView!
     
-//    var manager = CommunicationManager(communicator: MultipeerCommunicator())
-    
-    let sectionsHeaders = ["Online", "History"]
+    private let sectionsHeaders = ["Online", "History"]
         
-    var conversations : [ConversationsListCellData] = []
+    private var conversations : [ConversationsListCellData] = []
     
     var model : IConversationsListModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        
-        self.tableView.estimatedRowHeight = 144
-        self.tableView.rowHeight = UITableViewAutomaticDimension
-        
-//        manager.conversationsListDelegate = self
-        
-//        let getConversations : ([ConversationsListCellData]) -> () = { [weak self] data in
-//            self?.conversations = data
-//        }
-//        model?.getConversations(getConversations: getConversations)
-//        reloadData()
+        configureTable()
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive(notification:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
@@ -47,8 +33,6 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         }
         
         setup(dataSource: model?.getConversations() ?? [])
-
-//        reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -61,14 +45,11 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     }
     
     @objc func applicationWillResignActive(notification: NSNotification) {
-//        manager.conversations.removeAll()
         setup(dataSource: [])
-        model?.communicationService?.conversations.removeAll()
-//        conversations.removeAll()
-//        reloadData()
+        model?.clearConversations()
     }
     
-    // MARK: - UITableView DataSource
+    // MARK: - UITableView
     
     func numberOfSections(in tableView: UITableView) -> Int {
 //        return self.sectionsHeaders.count
@@ -109,29 +90,42 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         conversations[indexPath.row].hasUnreadMessages  = false
-        model?.communicationService?.conversations[indexPath.row].hasUnreadMessages = false
+        prepareConversationVC(title: conversations[indexPath.row].name, userId: conversations[indexPath.row].ID)
+    }
+    
+    // MARK: - IBActions
+    
+    @IBAction func pressProfileButton(_ sender: UIButton) {
+        prepareProfileVC()
+    }
+
+    // MARK: - Private methods
+    private func configureTable() {
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.estimatedRowHeight = 144
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+    }
+    
+    private func prepareConversationVC(title: String?, userId: String?) {
         let destinationVC = ConversationAssembly().conversationViewController()
-        destinationVC.title = conversations[indexPath.row].name
-        destinationVC.userId = conversations[indexPath.row].ID
-//        destinationVC.model?.communicationService?.delegate = destinationVC
         destinationVC.model?.delegate = destinationVC
+        destinationVC.title = title
+        destinationVC.userId = userId
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
-    
-    @IBAction func pressProfileButton(_ sender: UIButton) {
+    private func prepareProfileVC() {
         let profileVC = ProfileAssembly().profileViewCotnroller()
         self.present(profileVC, animated: true, completion: nil)
     }
-
-    
 }
 
-// MARK: - CommunicationManagerDelegate
+// MARK: - Delegates
 
-extension ConversationsListViewController: CommunicationManagerDelegate {
+extension ConversationsListViewController: ICommunicationManagerDelegate {
+    
     func reloadData() {
-//        conversations = manager.conversations
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }

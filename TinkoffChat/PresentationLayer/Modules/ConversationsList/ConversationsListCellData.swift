@@ -1,5 +1,5 @@
 //
-//  DummyConversationCellData.swift
+//  ConversationCellData.swift
 //  TinkoffChat
 //
 //  Created by Maria Semakova on 10/8/17.

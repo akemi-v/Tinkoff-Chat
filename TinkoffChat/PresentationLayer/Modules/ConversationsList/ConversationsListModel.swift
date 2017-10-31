@@ -10,9 +10,10 @@ import Foundation
 
 protocol IConversationsListModel : class {
     weak var delegate : IConversationsListModelDelegate? { get set }
-    var communicationService : CommunicatorDelegate? { get set }
+    var communicationService : ICommunicatorDelegate? { get set }
     
     func getConversations() -> [ConversationsListCellData]
+    func clearConversations()
 }
 
 protocol IConversationsListModelDelegate : class {
@@ -21,26 +22,42 @@ protocol IConversationsListModelDelegate : class {
 
 class ConversationsListModel : IConversationsListModel {
     weak var delegate: IConversationsListModelDelegate? 
-    var communicationService: CommunicatorDelegate?
-    var conversations: [ConversationsListCellData] = []
+    var communicationService: ICommunicatorDelegate?
     
-    init(communicationService: CommunicatorDelegate) {
+    init(communicationService: ICommunicatorDelegate) {
         self.communicationService = communicationService
         self.communicationService?.delegate = self
     }
     
     func getConversations() -> [ConversationsListCellData] {
         if let manager = communicationService {
+            let sortedConversations = sortConversationsListByDateThenName(conversations: manager.conversations)
+            manager.conversations = sortedConversations
             return manager.conversations
         }
         return []
     }
-}
-
-extension ConversationsListModel : CommunicationManagerDelegate {
-    func reloadData() {
-        (self.delegate as? ConversationsListViewController)?.setup(dataSource: getConversations())
+    
+    func clearConversations() {
+        communicationService?.conversations.removeAll()
     }
     
-    
+    private func sortConversationsListByDateThenName(conversations: [ConversationsListCellData]) -> [ConversationsListCellData] {
+        
+        let sortedConversations = conversations.sorted(by: {
+            if $0.date ?? Date(timeIntervalSince1970: 0) != $1.date ?? Date(timeIntervalSince1970: 0) {
+                return $0.date ?? Date(timeIntervalSince1970: 0) > $1.date ?? Date(timeIntervalSince1970: 0)
+            } else {
+                return $0.name?.lowercased() ?? "" < $1.name?.lowercased() ?? ""
+            }
+        })
+        return sortedConversations
+        
+    }
+}
+
+extension ConversationsListModel : ICommunicationManagerDelegate {
+    func reloadData() {
+        (self.delegate as? ConversationsListViewController)?.setup(dataSource: getConversations())
+    } 
 }

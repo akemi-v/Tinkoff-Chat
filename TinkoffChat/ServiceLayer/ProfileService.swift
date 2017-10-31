@@ -25,7 +25,6 @@ class ProfileService : IProfileService {
         let fileName = "profile.json"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         self.url = URL(fileURLWithPath: documents).appendingPathComponent(fileName)
-//        self.dataManager = dataManager
     }
     
     func saveDataGCD(profileData: [String: String], success: @escaping () -> (), failure: @escaping () -> ()) {

@@ -13,12 +13,12 @@ class ConversationAssembly {
     func conversationViewController() -> ConversationViewController {
         let model = conversationModel()
         let storyboard = UIStoryboard(name: "Conversation", bundle: nil)
-//        let navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
-//        let conversationVC = navigationController.viewControllers.first as! ConversationViewController
-        let conversationVC = storyboard.instantiateInitialViewController() as! ConversationViewController
-        conversationVC.model = model
-        model.delegate = conversationVC
-        return conversationVC
+        if let conversationVC = storyboard.instantiateInitialViewController() as? ConversationViewController {
+            conversationVC.model = model
+            model.delegate = conversationVC
+            return conversationVC
+        }
+        return ConversationViewController(nibName: nil, bundle: nil)
     }
     
     // MARK: - PRIVATE SECTION
@@ -27,7 +27,7 @@ class ConversationAssembly {
         return ConversationModel(communicationService: communicationManager())
     }
     
-    private func communicationManager() -> CommunicatorDelegate {
+    private func communicationManager() -> ICommunicatorDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.rootAssembly.communicationManager
     }

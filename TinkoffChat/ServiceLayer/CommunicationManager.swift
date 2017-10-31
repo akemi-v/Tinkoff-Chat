@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol CommunicatorDelegate : class {
+protocol ICommunicatorDelegate : class {
     //discovering
     func didFoundUser(userID: String, userName: String?)
     func didLostUser(userID: String)
@@ -23,43 +23,42 @@ protocol CommunicatorDelegate : class {
     
     var conversations : [ConversationsListCellData] { get set }
     var conversationMessages : [String: [ConversationCellData]] { get set }
-    var delegate: CommunicationManagerDelegate? { get set }
+    var delegate: ICommunicationManagerDelegate? { get set }
 }
 
-protocol CommunicationManagerDelegate : class {
+protocol ICommunicationManagerDelegate : class {
     func reloadData()
 }
 
-protocol CommunicationManagerConversationDelegate : class {
+protocol IHavingSendButton : class {
     func enableSendButton(enable: Bool)
 }
 
-class CommunicationManager: CommunicatorDelegate {
-    var delegate: CommunicationManagerDelegate?
+class CommunicationManager: ICommunicatorDelegate {
+    var delegate: ICommunicationManagerDelegate?
     
-    private var communicator : Communicator?
+    private var communicator : ICommunicator?
 
     var conversations : [ConversationsListCellData] = []
     var conversationMessages : [String: [ConversationCellData]] = [:]
     
     
-    init(communicator: Communicator) {
+    init(communicator: ICommunicator) {
         self.communicator = communicator
         self.communicator?.delegate = self
     }
     
     func didFoundUser(userID: String, userName: String?) {
         conversations.append(ConversationsListCellData(ID: userID, name: userName, message: nil, date: nil, online: true, hasUnreadMessages: false, lastIncoming: true))
-
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: conversations) {
-            conversations = sortedConversations
-        }
         
         if conversationMessages[userID] == nil {
             conversationMessages[userID] = []
         }
         
         self.delegate?.reloadData()
+        if let delegateVC = self.delegate as? IHavingSendButton {
+            delegateVC.enableSendButton(enable: true)
+        }
     }
     
     func didLostUser(userID: String) {        
@@ -72,6 +71,9 @@ class CommunicationManager: CommunicatorDelegate {
         
         conversationMessages[userID] = []
         self.delegate?.reloadData()
+        if let delegateVC = self.delegate as? IHavingSendButton {
+            delegateVC.enableSendButton(enable: false)
+        }
     }
     
     func failedToStartBrowsingForUsers(error: Error) {
@@ -101,14 +103,8 @@ class CommunicationManager: CommunicatorDelegate {
             messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: text), at: 0)
             conversationMessages[fromUser] = messages
         }
-                
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: conversations) {
-            conversations = sortedConversations
-        }
         
         self.delegate?.reloadData()
-//        self.conversationsListDelegate?.reloadData()
-//        self.conversationDelegate?.reloadData()
     }
     
     func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?) {

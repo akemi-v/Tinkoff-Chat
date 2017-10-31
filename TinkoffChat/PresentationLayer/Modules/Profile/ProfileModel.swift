@@ -1,5 +1,5 @@
 //
-//  ProfileData.swift
+//  ProfileModel.swift
 //  TinkoffChat
 //
 //  Created by Maria Semakova on 10/30/17.
@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 protocol IProfileModel : class {
-    weak var delegate : IProfileModelDelegate? { get set }
     
     func saveProfileDataGCD(profileData: [String: String], success: @escaping () -> (), failure: @escaping () -> ())
     func saveProfileDataOperation(profileData: [String: String], success: @escaping () -> (), failure: @escaping () -> ())
@@ -18,12 +17,7 @@ protocol IProfileModel : class {
     func loadProfileDataOperation(setLoadedData: @escaping ([String: String]) -> ())
 }
 
-protocol IProfileModelDelegate : class {
-    
-}
-
 class ProfileModel : IProfileModel {
-    weak var delegate: IProfileModelDelegate?
     private var profileService: IProfileService
     
     init(profileService: IProfileService) {

@@ -37,7 +37,7 @@
                                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="g64-8Z-nnF" id="rRq-vx-qgS">
-                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VYb-2u-MS8">
@@ -75,7 +75,7 @@
                                                         <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZGe-ko-ZOE" id="AMT-cO-aen">
-                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-BC-4N3">
@@ -189,7 +189,7 @@
                     <connections>
                         <outlet property="footerView" destination="7qT-Ob-H1l" id="g2N-ta-lAR"/>
                         <outlet property="messageField" destination="vaa-Nd-429" id="cpw-z2-djw"/>
-                        <outlet property="scrollView" destination="kXy-1U-vB3" id="jRv-xT-AaQ"/>
+                        <outlet property="scrollView" destination="kXy-1U-vB3" id="djN-mr-Oqb"/>
                         <outlet property="sendMessageButton" destination="RO2-Zg-Unc" id="Vqa-gu-QYg"/>
                         <outlet property="tableView" destination="aVk-GV-uSY" id="YOj-qK-MZR"/>
                     </connections>
