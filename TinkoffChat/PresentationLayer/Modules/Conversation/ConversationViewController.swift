@@ -19,10 +19,12 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     
     var activeTextField : UITextField?
     
-    var manager : CommunicationManager?
+//    var manager : CommunicationManager?
     
     var userId: String? = nil
     var messages: [ConversationCellData] = []
+    
+    var model : IConversationModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,8 +35,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorStyle = .none
         tableView.transform = CGAffineTransform(rotationAngle: -.pi);
-        
-//        manager?.conversationDelegate = self
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tap)
@@ -50,18 +50,26 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        model?.userId = userId
+        setup(dataSource: model?.getMessages() ?? [])
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        manager?.conversations.enumerated().forEach({ (index, conversation) in
+        model?.communicationService?.conversations.enumerated().forEach({ (index, conversation) in
             if userId == conversation.ID {
-                manager?.conversations[index].hasUnreadMessages = false
+                model?.communicationService?.conversations[index].hasUnreadMessages = false
             }
         })
-                
+
+        
+        let conversationsListVC = ConversationsListAssembly().conversationsListViewCotnroller()
+        
+        self.navigationController?.setViewControllers([conversationsListVC.topViewController!], animated: false)
+        
         super.viewWillDisappear(animated)
 
     }
@@ -117,27 +125,29 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else { return }
         guard let userIdUnwrapped = userId else { return }
         messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: messageField.text), at: 0)
-        manager?.conversationMessages[userIdUnwrapped] = messages
         
-        manager?.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
+        model?.communicationService?.conversationMessages[userIdUnwrapped] = messages
         
-        manager?.conversations.enumerated().forEach({ (index, conversation) in
+        model?.communicationService?.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
+        
+        model?.communicationService?.conversations.enumerated().forEach({ (index, conversation) in
             if userId == conversation.ID {
-                manager?.conversations[index].hasUnreadMessages = false
-                manager?.conversations[index].message = messageField.text
-                manager?.conversations[index].date = Date()
-                manager?.conversations[index].lastIncoming = false
+                model?.communicationService?.conversations[index].hasUnreadMessages = false
+                model?.communicationService?.conversations[index].message = messageField.text
+                model?.communicationService?.conversations[index].date = Date()
+                model?.communicationService?.conversations[index].lastIncoming = false
             }
 
         })
         
-        if let sortedConversations = sortConversationsListByDateThenName(conversations: manager?.conversations) {
-            manager?.conversations = sortedConversations
+        if let sortedConversations = sortConversationsListByDateThenName(conversations: model?.communicationService?.conversations) {
+            model?.communicationService?.conversations = sortedConversations
         }
         
         self.messageField.text = ""
         enableSendButton(enable: false)
-        reloadData()
+//        reloadData()
+        setup(dataSource: messages)
     }
     
     
@@ -195,7 +205,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
 extension ConversationViewController: CommunicationManagerDelegate {
     @objc func reloadData() {
         guard let unwrappedUserId = userId else { return }
-        guard let conversationMessages = manager?.conversationMessages[unwrappedUserId] else { return }
+        guard let conversationMessages = model?.communicationService?.conversationMessages[unwrappedUserId] else { return }
         messages = conversationMessages
         DispatchQueue.main.async {
             self.tableView.reloadData()

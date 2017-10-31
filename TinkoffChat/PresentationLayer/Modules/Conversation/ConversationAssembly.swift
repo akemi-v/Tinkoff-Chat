@@ -10,10 +10,13 @@ import Foundation
 import UIKit
 
 class ConversationAssembly {
-    func conversationViewCotnroller() -> ConversationViewController {
+    func conversationViewController() -> ConversationViewController {
         let model = conversationModel()
         let storyboard = UIStoryboard(name: "Conversation", bundle: nil)
+//        let navigationController = storyboard.instantiateInitialViewController() as! UINavigationController
+//        let conversationVC = navigationController.viewControllers.first as! ConversationViewController
         let conversationVC = storyboard.instantiateInitialViewController() as! ConversationViewController
+        conversationVC.model = model
         model.delegate = conversationVC
         return conversationVC
     }

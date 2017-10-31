@@ -218,6 +218,7 @@
 				184D165F1F72C9D400BBF892 /* Sources */,
 				184D16601F72C9D400BBF892 /* Frameworks */,
 				184D16611F72C9D400BBF892 /* Resources */,
+				18F53C9A1FA7A68E007ADCEF /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -279,6 +280,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		18F53C9A1FA7A68E007ADCEF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Running CPD\npmd cpd --files ${EXECUTABLE_NAME} --minimum-tokens 50 --language swift --encoding UTF-8 --format net.sourceforge.pmd.cpd.XMLRenderer > cpd-output.xml --failOnViolation true\n# Running script\nphp ./cpd_script.php -cpd-xml cpd-output.xml";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		184D165F1F72C9D400BBF892 /* Sources */ = {

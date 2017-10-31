@@ -51,6 +51,10 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
 //        reloadData()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -59,6 +63,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     @objc func applicationWillResignActive(notification: NSNotification) {
 //        manager.conversations.removeAll()
         setup(dataSource: [])
+        model?.communicationService?.conversations.removeAll()
 //        conversations.removeAll()
 //        reloadData()
     }
@@ -104,10 +109,12 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         conversations[indexPath.row].hasUnreadMessages  = false
-        let destinationVC = ConversationAssembly().conversationViewCotnroller()
+        model?.communicationService?.conversations[indexPath.row].hasUnreadMessages = false
+        let destinationVC = ConversationAssembly().conversationViewController()
         destinationVC.title = conversations[indexPath.row].name
         destinationVC.userId = conversations[indexPath.row].ID
-        //        destinationVC.manager = manager
+//        destinationVC.model?.communicationService?.delegate = destinationVC
+        destinationVC.model?.delegate = destinationVC
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     

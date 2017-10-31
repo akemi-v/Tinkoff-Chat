@@ -19,8 +19,10 @@ protocol CommunicatorDelegate : class {
     
     //messages
     func didReceiveMessage(text: String, fromUser: String, toUser: String)
+    func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?)
     
-    var conversations : [ConversationsListCellData] { get }
+    var conversations : [ConversationsListCellData] { get set }
+    var conversationMessages : [String: [ConversationCellData]] { get set }
     var delegate: CommunicationManagerDelegate? { get set }
 }
 
@@ -58,8 +60,6 @@ class CommunicationManager: CommunicatorDelegate {
         }
         
         self.delegate?.reloadData()
-//        self.conversationDelegate?.enableSendButton(enable: true)
-//        self.conversationsListDelegate?.reloadData()
     }
     
     func didLostUser(userID: String) {        
@@ -72,8 +72,6 @@ class CommunicationManager: CommunicatorDelegate {
         
         conversationMessages[userID] = []
         self.delegate?.reloadData()
-//        self.conversationDelegate?.enableSendButton(enable: false)
-//        self.conversationsListDelegate?.reloadData()
     }
     
     func failedToStartBrowsingForUsers(error: Error) {
@@ -115,6 +113,7 @@ class CommunicationManager: CommunicatorDelegate {
     
     func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?) {
         communicator?.sendMessage(string: string, to: userID, completionHandler: completionHandler)
+        self.delegate?.reloadData()
     }
     
 }
