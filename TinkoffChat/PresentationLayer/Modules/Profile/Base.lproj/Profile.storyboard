@@ -78,34 +78,8 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1kl-BE-Qbs">
-                                                <rect key="frame" x="0.0" y="353" width="343" height="220"/>
+                                                <rect key="frame" x="0.0" y="353" width="343" height="166"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a4R-Sg-x5o">
-                                                        <rect key="frame" x="0.0" y="176" width="166.5" height="44"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="44" id="Jz6-7y-w7v"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <state key="normal" title="GCD">
-                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="gcdSaveData:" destination="LhY-bL-IXP" eventType="touchUpInside" id="SdI-0Y-8Pg"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qk1-m9-Zvq">
-                                                        <rect key="frame" x="176.5" y="176" width="166.5" height="44"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="44" id="QUv-ke-Qn7"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <state key="normal" title="Operation">
-                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="operationSaveData:" destination="LhY-bL-IXP" eventType="touchUpInside" id="VUA-3b-cDG"/>
-                                                        </connections>
-                                                    </button>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Maria Semakova" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="g8P-XU-tLY">
                                                         <rect key="frame" x="8" y="8" width="327" height="34"/>
                                                         <nil key="textColor"/>
@@ -113,32 +87,53 @@
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" enablesReturnKeyAutomatically="YES"/>
                                                     </textField>
                                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="249" scrollEnabled="NO" text="iOS developer from Moscow (also penguins are the best)" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="JRf-Xm-pNp" customClass="UITextViewFixed" customModule="TinkoffChat" customModuleProvider="target">
-                                                        <rect key="frame" x="8" y="49" width="327" height="120"/>
+                                                        <rect key="frame" x="8" y="49" width="327" height="41"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences" spellCheckingType="no" enablesReturnKeyAutomatically="YES"/>
                                                     </textView>
                                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="9cY-bp-GnE">
-                                                        <rect key="frame" x="161.5" y="141" width="20" height="20"/>
+                                                        <rect key="frame" x="161.5" y="96" width="20" height="20"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="g8P-XU-tLY" firstAttribute="top" secondItem="1kl-BE-Qbs" secondAttribute="top" constant="8" id="1Iz-rP-4HQ"/>
                                                     <constraint firstItem="9cY-bp-GnE" firstAttribute="centerX" secondItem="1kl-BE-Qbs" secondAttribute="centerX" id="7LG-6C-hoq"/>
-                                                    <constraint firstAttribute="trailing" secondItem="qk1-m9-Zvq" secondAttribute="trailing" id="FoV-95-e3b"/>
                                                     <constraint firstItem="g8P-XU-tLY" firstAttribute="leading" secondItem="1kl-BE-Qbs" secondAttribute="leading" constant="8" id="NoF-BA-IZX"/>
                                                     <constraint firstItem="JRf-Xm-pNp" firstAttribute="top" secondItem="g8P-XU-tLY" secondAttribute="bottom" constant="7" id="WTx-2E-XBb"/>
                                                     <constraint firstAttribute="trailing" secondItem="g8P-XU-tLY" secondAttribute="trailing" constant="8" id="WUK-R4-UKV"/>
-                                                    <constraint firstItem="a4R-Sg-x5o" firstAttribute="top" secondItem="JRf-Xm-pNp" secondAttribute="bottom" constant="7" id="euG-UO-VYw"/>
-                                                    <constraint firstItem="a4R-Sg-x5o" firstAttribute="width" secondItem="qk1-m9-Zvq" secondAttribute="width" id="gHd-XI-JLC"/>
-                                                    <constraint firstItem="a4R-Sg-x5o" firstAttribute="top" secondItem="9cY-bp-GnE" secondAttribute="bottom" constant="15" id="heV-0J-gYN"/>
-                                                    <constraint firstItem="a4R-Sg-x5o" firstAttribute="leading" secondItem="1kl-BE-Qbs" secondAttribute="leading" id="oB7-Jz-88b"/>
+                                                    <constraint firstAttribute="bottom" secondItem="9cY-bp-GnE" secondAttribute="bottom" constant="50" id="iNB-W1-YCe"/>
                                                     <constraint firstItem="JRf-Xm-pNp" firstAttribute="leading" secondItem="1kl-BE-Qbs" secondAttribute="leading" constant="8" id="oJ3-bQ-d6A"/>
-                                                    <constraint firstItem="qk1-m9-Zvq" firstAttribute="leading" secondItem="a4R-Sg-x5o" secondAttribute="trailing" constant="10" id="sOz-dK-FOz"/>
-                                                    <constraint firstAttribute="bottom" secondItem="a4R-Sg-x5o" secondAttribute="bottom" id="ue5-Wf-t35"/>
-                                                    <constraint firstAttribute="bottom" secondItem="qk1-m9-Zvq" secondAttribute="bottom" id="xud-wP-8v8"/>
                                                     <constraint firstAttribute="trailing" secondItem="JRf-Xm-pNp" secondAttribute="trailing" constant="8" id="ylM-Go-oZT"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tPc-By-h5i">
+                                                <rect key="frame" x="0.0" y="529" width="343" height="44"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="Sot-tN-qjs">
+                                                        <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                        <subviews>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0uT-2z-VwB" userLabel="Save Data Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <state key="normal" title="Save profile data">
+                                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                </state>
+                                                                <connections>
+                                                                    <action selector="saveData:" destination="LhY-bL-IXP" eventType="touchUpInside" id="288-wZ-TO9"/>
+                                                                </connections>
+                                                            </button>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstItem="Sot-tN-qjs" firstAttribute="leading" secondItem="tPc-By-h5i" secondAttribute="leading" id="2Bf-xb-ZVq"/>
+                                                    <constraint firstAttribute="height" constant="44" id="HDi-vO-OqN"/>
+                                                    <constraint firstItem="Sot-tN-qjs" firstAttribute="top" secondItem="tPc-By-h5i" secondAttribute="top" id="Siw-da-bAz"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Sot-tN-qjs" secondAttribute="bottom" id="sju-yL-foT"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Sot-tN-qjs" secondAttribute="trailing" id="uKj-Bw-5lS"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -166,10 +161,9 @@
                     <connections>
                         <outlet property="aboutTextView" destination="JRf-Xm-pNp" id="b8o-cA-v3b"/>
                         <outlet property="chooseProfilePicButton" destination="wLc-sI-YdX" id="dnQ-ld-xvh"/>
-                        <outlet property="gcdSaveDataButton" destination="a4R-Sg-x5o" id="iMe-k6-Xts"/>
                         <outlet property="nameTextField" destination="g8P-XU-tLY" id="9lL-PS-myt"/>
-                        <outlet property="operationSaveDataButton" destination="qk1-m9-Zvq" id="7bN-Ir-J5X"/>
                         <outlet property="profilePicImageView" destination="KEs-n4-Xmf" id="L26-s3-04c"/>
+                        <outlet property="saveDataButton" destination="0uT-2z-VwB" id="zTf-Jd-Lim"/>
                         <outlet property="savingDataActivityIndicator" destination="9cY-bp-GnE" id="dco-VU-Zrt"/>
                         <outlet property="scrollView" destination="sO0-gi-OIb" id="cgd-cU-ybO"/>
                     </connections>

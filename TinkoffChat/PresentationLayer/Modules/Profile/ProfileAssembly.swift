@@ -27,7 +27,19 @@ class ProfileAssembly {
     }
     
     private func profileService() -> IProfileService {
-        return ProfileService()
+        return ProfileService(gcdDataManager: gcdDataManager(), operationDataManager: operationDataManager(), storageManager: storageManager())
+    }
+    
+    private func storageManager() -> IDataManager {
+        return StorageManager()
+    }
+    
+    private func gcdDataManager() -> IDataManager {
+        return GCDDataManager()
+    }
+    
+    private func operationDataManager() -> IDataManager {
+        return OperationDataManager()
     }
     
 }

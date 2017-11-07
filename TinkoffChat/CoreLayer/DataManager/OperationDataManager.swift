@@ -9,14 +9,22 @@
 import Foundation
 
 class OperationDataManager : IDataManager {
-    
-    func saveDictData(dictData: [String: String], toUrl: URL?, success: @escaping () -> (), failure: @escaping () -> ()) {
+    func saveDictData(dictData: [String : String], toUrl: URL?, completionHandler: @escaping (Bool) -> ()) {
         let queue = OperationQueue()
         
         guard let url = toUrl else { return }
-        let saveOperation : AsyncOperation = AsyncOperation(dictData: dictData, saveData: true, url: url, success: success, failure: failure)
+        let saveOperation : AsyncOperation = AsyncOperation(dictData: dictData, saveData: true, url: url, completionHandler: completionHandler)
         queue.addOperation(saveOperation)
     }
+    
+    
+//    func saveDictData(dictData: [String: String], toUrl: URL?, success: @escaping () -> (), failure: @escaping () -> ()) {
+//        let queue = OperationQueue()
+//        
+//        guard let url = toUrl else { return }
+//        let saveOperation : AsyncOperation = AsyncOperation(dictData: dictData, saveData: true, url: url, success: success, failure: failure)
+//        queue.addOperation(saveOperation)
+//    }
     
     func loadDictData(setLoadedDictData: @escaping ([String: String]) -> (), fromUrl: URL?) {
         let queue = OperationQueue()
@@ -30,18 +38,21 @@ class OperationDataManager : IDataManager {
 
 class AsyncOperation : Operation {
     private var _dictData : [String: String]? = nil
-    private var _success : (() -> ())? = nil
-    private var _failure : (() -> ())? = nil
+//    private var _success : (() -> ())? = nil
+//    private var _failure : (() -> ())? = nil
+    private var _completionHandler : ((Bool) -> ())? = nil
     private var _setLoadedDictData: (([String: String]) -> ())? = nil
     private var _saveData : Bool = false
     private var _url: URL
     
-    init(dictData: [String: String], saveData: Bool, url: URL, success: @escaping () -> (), failure: @escaping () -> ()) {
+    init(dictData: [String: String], saveData: Bool, url: URL, completionHandler: @escaping (Bool) -> ()) {
         self._dictData = dictData
         self._saveData = saveData
         self._url = url
-        self._success = success
-        self._failure = failure
+//        self._success = success
+//        self._failure = failure
+        self._completionHandler = completionHandler
+        
     }
     
     init(saveData: Bool, url: URL, setLoadedDictData: @escaping ([String: String]) -> ()) {
@@ -104,11 +115,11 @@ class AsyncOperation : Operation {
                             jsonData = try JSONSerialization.data(withJSONObject: self._dictData as Any, options: .prettyPrinted) as NSData
                             try jsonData.write(to: self._url, options: .atomic)
                             OperationQueue.main.addOperation {
-                                self._success?()
+                                self._completionHandler?(true)
                             }
                         } catch {
                             print(error)
-                            self._failure?()
+                            self._completionHandler?(false)
                         }
                     }
                 }

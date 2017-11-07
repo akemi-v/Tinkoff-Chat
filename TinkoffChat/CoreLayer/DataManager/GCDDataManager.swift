@@ -9,6 +9,27 @@
 import Foundation
 
 class GCDDataManager : IDataManager {
+    func saveDictData(dictData: [String : String], toUrl: URL?, completionHandler: @escaping (Bool) -> ()) {
+        let queue = DispatchQueue.global(qos: .userInitiated)
+        queue.async {
+            guard let url = toUrl else { return }
+            if JSONSerialization.isValidJSONObject(dictData) {
+                do {
+                    let jsonData = try JSONSerialization.data(withJSONObject: dictData, options: .prettyPrinted) as NSData
+                    try jsonData.write(to: url, options: .atomic)
+                    DispatchQueue.main.async {
+                        completionHandler(true)
+                    }
+                } catch {
+                    print(error)
+                    DispatchQueue.main.async {
+                        completionHandler(false)
+                    }
+                }
+            }
+        }
+    }
+    
     
     func saveDictData(dictData: [String: String], toUrl: URL?, success: @escaping () -> (), failure: @escaping () -> ()) {
         

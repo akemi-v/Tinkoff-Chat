@@ -10,8 +10,9 @@ import UIKit
 
 class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
     
-    @IBOutlet weak var gcdSaveDataButton: UIButton!
-    @IBOutlet weak var operationSaveDataButton: UIButton!
+    @IBOutlet weak var gcdSaveDataButton: UIButton?
+    @IBOutlet weak var operationSaveDataButton: UIButton?
+    @IBOutlet weak var saveDataButton: UIButton!
     @IBOutlet weak var chooseProfilePicButton: UIButton!
     @IBOutlet weak var profilePicImageView: UIImageView!
     @IBOutlet weak var savingDataActivityIndicator: UIActivityIndicatorView!
@@ -52,10 +53,9 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             self?.profilePicImageView.image = decodedimage
         }
         
-        model?.loadProfileDataGCD(setLoadedData: setLoadedData)
+        model?.loadData(mode: "Storage", setLoadedData: setLoadedData)
 
-        enableGcdSaveButton(enable: false)
-        enableOperationSaveButton(enable: false)
+        enableButtons(enable: false)
         
         savingDataActivityIndicator.isHidden = true
         
@@ -64,14 +64,10 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         profilePicImageView.layer.cornerRadius = chooseProfilePicButton.layer.cornerRadius
         profilePicImageView.layer.masksToBounds = true
-
-        gcdSaveDataButton.layer.borderColor = UIColor.black.cgColor
-        gcdSaveDataButton.layer.borderWidth = 1
-        gcdSaveDataButton.layer.cornerRadius = 10
         
-        operationSaveDataButton.layer.borderColor = UIColor.black.cgColor
-        operationSaveDataButton.layer.borderWidth = 1
-        operationSaveDataButton.layer.cornerRadius = 10
+        saveDataButton.layer.borderColor = UIColor.black.cgColor
+        saveDataButton.layer.borderWidth = 1
+        saveDataButton.layer.cornerRadius = 10
         
         let backButton = UIBarButtonItem(title: "Закрыть", style: UIBarButtonItemStyle.plain, target: self, action: #selector(goBack))
         navigationItem.leftBarButtonItem = backButton
@@ -191,8 +187,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         if let pickedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             profilePicImageView.contentMode = .scaleAspectFit
             profilePicImageView.image = pickedImage
-            enableGcdSaveButton(enable: true)
-            enableOperationSaveButton(enable: true)
+            enableButtons(enable: true)
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -205,31 +200,52 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func gcdSaveData(_ sender: UIButton) {
         self.savingDataActivityIndicator.startAnimating()
-        enableGcdSaveButton(enable: false)
-        enableOperationSaveButton(enable: false)
+        enableButtons(enable: false)
         
         let profileData : [String: String] = prepareImageForSaving()
         let success : () -> () = prepareSuccessAlert()
         let failure = prepareFailureAlert(activateSaving: { [weak self] in
             self?.savingDataActivityIndicator.startAnimating()
             self?.gcdSaveData(sender) })
+        let completionHandler : (Bool) -> () = { flag in
+            flag ? success() : failure()
+        }
         
-        model?.saveProfileDataGCD(profileData: profileData, success: success, failure: failure)
+        model?.saveData(mode: "GCD", profileData: profileData, completionHandler: completionHandler)
     }
     
     @IBAction func operationSaveData(_ sender: UIButton) {
         self.savingDataActivityIndicator.startAnimating()
-        enableGcdSaveButton(enable: false)
-        enableOperationSaveButton(enable: false)
+        enableButtons(enable: false)
         
         let profileData : [String: String] = prepareImageForSaving()
         let success : () -> () = prepareSuccessAlert()
         let failure = prepareFailureAlert(activateSaving: { [weak self] in
             self?.savingDataActivityIndicator.startAnimating()
             self?.operationSaveData(sender) })
-        
-        model?.saveProfileDataOperation(profileData: profileData, success: success, failure: failure)
+        let completionHandler : (Bool) -> () = { flag in
+            flag ? success() : failure()
+        }
+
+        model?.saveData(mode: "Operation", profileData: profileData, completionHandler: completionHandler)
     }
+    
+    @IBAction func saveData(_ sender: UIButton) {
+        self.savingDataActivityIndicator.startAnimating()
+        enableButtons(enable: false)
+        
+        let profileData : [String: String] = prepareImageForSaving()
+        let success : () -> () = prepareSuccessAlert()
+        let failure = prepareFailureAlert(activateSaving: { [weak self] in
+            self?.savingDataActivityIndicator.startAnimating()
+            self?.saveData(sender) })
+        let completionHandler : (Bool) -> () = { flag in
+            flag ? success() : failure()
+        }
+        
+        model?.saveData(mode: "Storage", profileData: profileData, completionHandler: completionHandler)
+    }
+    
     
     // MARK: - Keyboard related
     
@@ -271,8 +287,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        enableGcdSaveButton(enable: true)
-        enableOperationSaveButton(enable: true)
+        enableButtons(enable: true)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField){
@@ -287,8 +302,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func textViewDidChange(_ textView: UITextView) {
-        enableGcdSaveButton(enable: true)
-        enableOperationSaveButton(enable: true)
+        enableButtons(enable: true)
     }
         
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -301,14 +315,25 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     // MARK: - Buttons enabling/disabling
     
+    func enableButtons(enable: Bool) {
+        enableGcdSaveButton(enable: enable)
+        enableOperationSaveButton(enable: enable)
+        enableSaveButton(enable: enable)
+    }
+    
     func enableGcdSaveButton(enable: Bool) {
-        self.gcdSaveDataButton.isEnabled = enable
-        self.gcdSaveDataButton.alpha = enable ? 1.0 : 0.3
+        self.gcdSaveDataButton?.isEnabled = enable
+        self.gcdSaveDataButton?.alpha = enable ? 1.0 : 0.3
     }
     
     func enableOperationSaveButton(enable: Bool) {
-        self.operationSaveDataButton.isEnabled = enable
-        self.operationSaveDataButton.alpha = enable ? 1.0 : 0.3
+        self.operationSaveDataButton?.isEnabled = enable
+        self.operationSaveDataButton?.alpha = enable ? 1.0 : 0.3
+    }
+    
+    func enableSaveButton(enable: Bool) {
+        self.saveDataButton.isEnabled = enable
+        self.saveDataButton.alpha = enable ? 1.0 : 0.3
     }
     
     // MARK: - Private methods
@@ -323,29 +348,36 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     private func prepareSuccessAlert() -> (() -> ()) {
         let success = { [weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
+            DispatchQueue.main.async {
+                self?.savingDataActivityIndicator.stopAnimating()
+            }
             let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
             alertMessageController.addAction(okAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self?.present(alertMessageController, animated: true, completion: nil)
+            }
         }
         return success
     }
     
     private func prepareFailureAlert(activateSaving: @escaping () -> ()) -> (() -> ()) {
         let failure = { [ weak self] in
-            self?.savingDataActivityIndicator.stopAnimating()
+            DispatchQueue.main.async {
+                self?.savingDataActivityIndicator.stopAnimating()
+            }
             let alertMessageController = UIAlertController(title: "Ошибка", message: "Не удалось сохранить данные", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ок", style: .default, handler: { [weak self] _ in
-                self?.enableGcdSaveButton(enable: true)
-                self?.enableOperationSaveButton(enable: true)
+                self?.enableButtons(enable: true)
             })
             let retryAction = UIAlertAction(title: "Повторить", style: .default, handler: { _ in
                     activateSaving()
             })
             alertMessageController.addAction(okAction)
             alertMessageController.addAction(retryAction)
-            self?.present(alertMessageController, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self?.present(alertMessageController, animated: true, completion: nil)
+            }
         }
         return failure
     }

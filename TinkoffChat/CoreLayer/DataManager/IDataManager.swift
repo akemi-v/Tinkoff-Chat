@@ -10,6 +10,6 @@ import Foundation
 
 protocol IDataManager {
     
-    func saveDictData(dictData: [String: String], toUrl: URL?, success: @escaping () -> (), failure: @escaping () -> ())
+    func saveDictData(dictData: [String: String], toUrl: URL?, completionHandler: @escaping (Bool) -> ())
     func loadDictData(setLoadedDictData: @escaping ([String: String]) -> (), fromUrl: URL?)
 }

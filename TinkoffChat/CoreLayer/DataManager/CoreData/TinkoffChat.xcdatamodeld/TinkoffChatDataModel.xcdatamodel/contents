@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="16G29" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AppUser" representedClassName="AppUser" syncable="YES" codeGenerationType="class">
+        <attribute name="about" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pic" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="appUser" inverseEntity="Conversation" syncable="YES"/>
+        <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="currentAppUser" inverseEntity="User" syncable="YES"/>
+        <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="lastMessageAppUser" inverseEntity="Message" syncable="YES"/>
+        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="appUser" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Conversation" representedClassName="Conversation" syncable="YES" codeGenerationType="class">
+        <relationship name="appUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AppUser" inverseName="conversations" inverseEntity="AppUser" syncable="YES"/>
+    </entity>
+    <entity name="Message" representedClassName="Message" syncable="YES" codeGenerationType="class">
+        <relationship name="lastMessageAppUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AppUser" inverseName="lastMessage" inverseEntity="AppUser" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="isOnline" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="appUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AppUser" inverseName="users" inverseEntity="AppUser" syncable="YES"/>
+        <relationship name="currentAppUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AppUser" inverseName="currentUser" inverseEntity="AppUser" syncable="YES"/>
+    </entity>
+    <fetchRequest name="AppUser" entity="AppUser"/>
+    <fetchRequest name="UserWithId" entity="User" predicateString="userId == $USERID"/>
+    <elements>
+        <element name="AppUser" positionX="322" positionY="-0" width="128" height="30"/>
+        <element name="Conversation" positionX="-54" positionY="-9" width="128" height="60"/>
+        <element name="Message" positionX="-36" positionY="9" width="128" height="60"/>
+        <element name="User" positionX="-18" positionY="27" width="128" height="120"/>
+    </elements>
+</model>
