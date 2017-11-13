@@ -50,15 +50,42 @@ extension AppUser {
         return appUser
     }
     
+    static func getAppUserName(in context: NSManagedObjectContext) -> String? {
+        guard let model = context.persistentStoreCoordinator?.managedObjectModel else {
+            print("Model is not available in context!")
+            assert(false)
+            return nil
+        }
+        
+        var appUser : AppUser?
+        
+        guard let fetchRequest = AppUser.fetchRequestAppUser(model: model) else {
+            return nil
+        }
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            assert(results.count < 2, "Multiple AppUsers found!")
+            if let foundUser = results.first {
+                appUser = foundUser
+            }
+        } catch {
+            print("Failed to fetch AppUser: \(error)")
+        }
+        
+        return appUser?.currentUser?.name
+
+    }
+    
     static func insertAppUser(in context: NSManagedObjectContext) -> AppUser? {
         if let appUser = NSEntityDescription.insertNewObject(forEntityName: "AppUser", into: context) as? AppUser {
             if appUser.currentUser == nil {
-                let currentUser = User.findOrInsertUser(with: User.generateUserIdString(), in: context)
+                let currentUser = User.findOrInsertUser(userId: User.generateUserIdString(), name: "", in: context)
                 currentUser?.name = User.generateCurrentUserNameString()
                 currentUser?.isOnline = true
                 appUser.currentUser = currentUser
-                appUser.name = "Default Name"
-                appUser.about = "Default info"
+                appUser.currentUser?.name = "Default Name"
+                appUser.currentUser?.about = "Default info"
             }
             
             return appUser

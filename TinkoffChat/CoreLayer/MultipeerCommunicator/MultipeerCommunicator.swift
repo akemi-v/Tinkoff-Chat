@@ -8,6 +8,7 @@
 
 import UIKit
 import MultipeerConnectivity
+import CoreData
 
 protocol ICommunicator : class {
     func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?)
@@ -25,11 +26,11 @@ class MultipeerCommunicator: NSObject, ICommunicator {
     var online : Bool = true
     
     private let tinkoffServiceType = "tinkoff-chat"
-    private let myDiscoveryInfo = ["userName" : "m.a.semakova"]
+    private var myDiscoveryInfo = ["userName" : "m.a.semakova"]
     private var sessions = [String: MCSession]()
     
     
-    override init() {
+    init(name: String) {
         super.init()
         
         myPeerId = MCPeerID(displayName: UIDevice.current.identifierForVendor!.uuidString)
@@ -37,6 +38,8 @@ class MultipeerCommunicator: NSObject, ICommunicator {
         browser = MCNearbyServiceBrowser(peer: myPeerId, serviceType: tinkoffServiceType)
         browser.delegate = self
         browser.startBrowsingForPeers()
+        
+        myDiscoveryInfo["userName"] = name
         
         advertiser = MCNearbyServiceAdvertiser(peer: myPeerId, discoveryInfo: myDiscoveryInfo, serviceType: tinkoffServiceType)
         advertiser.delegate = self

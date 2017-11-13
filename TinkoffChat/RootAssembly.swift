@@ -13,9 +13,12 @@ class RootAssembly {
     
     var multipeerCommunicator : ICommunicator
     var communicationManager : ICommunicatorDelegate
+    var storageManager : (IDataManager & IStorageManager)
     
     init() {
-        multipeerCommunicator = MultipeerCommunicator()
-        communicationManager = CommunicationManager(communicator: multipeerCommunicator)
+        let stack = CoreDataStack()
+        storageManager = StorageManager(stack: stack)
+        multipeerCommunicator = MultipeerCommunicator(name: storageManager.getAppUserName())
+        communicationManager = CommunicationManager(communicator: multipeerCommunicator, storage: storageManager)
     }
 }

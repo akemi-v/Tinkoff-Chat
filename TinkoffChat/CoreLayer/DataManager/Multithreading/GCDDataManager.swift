@@ -9,6 +9,7 @@
 import Foundation
 
 class GCDDataManager : IDataManager {
+
     func saveDictData(dictData: [String : String], toUrl: URL?, completionHandler: @escaping (Bool) -> ()) {
         let queue = DispatchQueue.global(qos: .userInitiated)
         queue.async {

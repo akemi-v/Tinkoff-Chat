@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 extension User {
     static func fetchRequestUser(userId: String, model: NSManagedObjectModel) -> NSFetchRequest<User>? {
@@ -20,7 +21,8 @@ extension User {
         return fetchRequest
     }
 
-    static func findOrInsertUser(with: String, in context: NSManagedObjectContext) -> User? {
+    static func findOrInsertUser(userId: String, name: String, in context: NSManagedObjectContext) -> User? {
+        
         guard let model = context.persistentStoreCoordinator?.managedObjectModel else {
             print("Model is not available in context!")
             assert(false)
@@ -29,7 +31,7 @@ extension User {
         
         var user : User?
         
-        guard let fetchRequest = User.fetchRequestUser(userId: with, model: model) else {
+        guard let fetchRequest = User.fetchRequestUser(userId: userId, model: model) else {
             return nil
         }
         
@@ -40,11 +42,12 @@ extension User {
                 user = foundUser
             }
         } catch {
-            print("Failed to fetch AppUser: \(error)")
+            print("Failed to fetch User: \(error)")
         }
         
         if user == nil {
-            user = User.insertUser(userId: with, in: context)
+            user = User.insertUser(userId: userId, in: context)
+            user?.name = name
         }
         
         return user

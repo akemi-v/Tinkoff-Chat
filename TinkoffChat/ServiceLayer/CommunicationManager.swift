@@ -38,23 +38,24 @@ class CommunicationManager: ICommunicatorDelegate {
     var delegate: ICommunicationManagerDelegate?
     
     private var communicator : ICommunicator?
+    private var storage : IStorageManager?
 
     var conversations : [ConversationsListCellData] = []
     var conversationMessages : [String: [ConversationCellData]] = [:]
     
     
-    init(communicator: ICommunicator) {
+    init(communicator: ICommunicator, storage: IStorageManager) {
         self.communicator = communicator
         self.communicator?.delegate = self
+        
+        self.storage = storage
+        self.storage?.setAllConversationsOffline()
     }
     
     func didFoundUser(userID: String, userName: String?) {
-        conversations.append(ConversationsListCellData(ID: userID, name: userName, message: nil, date: nil, online: true, hasUnreadMessages: false, lastIncoming: true))
         
-        if conversationMessages[userID] == nil {
-            conversationMessages[userID] = []
-        }
-        
+        storage?.setOnlineConversation(userID: userID, userName: userName)
+
         self.delegate?.reloadData()
         if let delegateVC = self.delegate as? IHavingSendButton {
             delegateVC.enableSendButton(enable: true)
@@ -62,14 +63,9 @@ class CommunicationManager: ICommunicatorDelegate {
     }
     
     func didLostUser(userID: String) {        
-        conversations.enumerated().forEach({ (index, conversation) in
-            if userID == conversation.ID {
-                conversations.remove(at: index)
-                return
-            }
-        })
         
-        conversationMessages[userID] = []
+        storage?.setOfflineConversation(userID: userID)
+        
         self.delegate?.reloadData()
         if let delegateVC = self.delegate as? IHavingSendButton {
             delegateVC.enableSendButton(enable: false)
@@ -103,6 +99,8 @@ class CommunicationManager: ICommunicatorDelegate {
             messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: text), at: 0)
             conversationMessages[fromUser] = messages
         }
+        
+        
         
         self.delegate?.reloadData()
     }

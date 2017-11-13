@@ -11,6 +11,7 @@ import Foundation
 protocol IConversationsListModel : class {
     weak var delegate : IConversationsListModelDelegate? { get set }
     var communicationService : ICommunicatorDelegate? { get set }
+    var storageService : (IDataManager & IStorageManager)? { get set }
     
     func getConversations() -> [ConversationsListCellData]
     func clearConversations()
@@ -23,10 +24,13 @@ protocol IConversationsListModelDelegate : class {
 class ConversationsListModel : IConversationsListModel {
     weak var delegate: IConversationsListModelDelegate? 
     var communicationService: ICommunicatorDelegate?
+    var storageService : (IDataManager & IStorageManager)?
     
-    init(communicationService: ICommunicatorDelegate) {
+    init(communicationService: ICommunicatorDelegate, storageService: (IDataManager & IStorageManager)) {
         self.communicationService = communicationService
         self.communicationService?.delegate = self
+        
+        self.storageService = storageService
     }
     
     func getConversations() -> [ConversationsListCellData] {

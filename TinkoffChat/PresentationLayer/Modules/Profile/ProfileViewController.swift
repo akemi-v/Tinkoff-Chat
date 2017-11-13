@@ -351,7 +351,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             DispatchQueue.main.async {
                 self?.savingDataActivityIndicator.stopAnimating()
             }
-            let alertMessageController = UIAlertController(title: "Данные сохранены", message: nil, preferredStyle: .alert)
+            let alertMessageController = UIAlertController(title: "Данные сохранены", message: "Перезапустите приложение, чтобы изменения увидели другие пользователи", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
             alertMessageController.addAction(okAction)
             DispatchQueue.main.async {

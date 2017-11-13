@@ -30,8 +30,9 @@ class ProfileAssembly {
         return ProfileService(gcdDataManager: gcdDataManager(), operationDataManager: operationDataManager(), storageManager: storageManager())
     }
     
-    private func storageManager() -> IDataManager {
-        return StorageManager()
+    private func storageManager() -> (IDataManager & IStorageManager) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.rootAssembly.storageManager
     }
     
     private func gcdDataManager() -> IDataManager {

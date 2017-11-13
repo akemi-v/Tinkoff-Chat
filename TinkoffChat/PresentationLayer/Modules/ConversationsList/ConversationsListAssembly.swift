@@ -24,12 +24,17 @@ class ConversationsListAssembly {
     // MARK: - PRIVATE SECTION
     
     private func conversationsListModel() -> IConversationsListModel {
-        return ConversationsListModel(communicationService: communicationManager())
+        return ConversationsListModel(communicationService: communicationManager(), storageService: storageManager())
     }
     
     private func communicationManager() -> ICommunicatorDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.rootAssembly.communicationManager
+    }
+    
+    private func storageManager() -> (IDataManager & IStorageManager) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.rootAssembly.storageManager
     }
 
 }

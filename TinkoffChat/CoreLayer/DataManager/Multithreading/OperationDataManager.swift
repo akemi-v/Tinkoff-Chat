@@ -9,6 +9,7 @@
 import Foundation
 
 class OperationDataManager : IDataManager {
+    
     func saveDictData(dictData: [String : String], toUrl: URL?, completionHandler: @escaping (Bool) -> ()) {
         let queue = OperationQueue()
         
