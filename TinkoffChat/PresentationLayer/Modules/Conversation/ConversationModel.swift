@@ -12,6 +12,7 @@ protocol IConversationModel : class {
     weak var delegate : IConversationModelDelegate? { get set }
     var communicationService : ICommunicatorDelegate? { get set }
     var userId : String? { get set }
+    var storageService : (IDataManager & IStorageManager)? { get set }
     
     func getMessages() -> [ConversationCellData]
     func markConversationAsRead()
@@ -30,10 +31,14 @@ class ConversationModel : IConversationModel {
     var communicationService: ICommunicatorDelegate?
     var conversations: [ConversationCellData] = []
     var userId: String?
+    var storageService: (IDataManager & IStorageManager)?
+
     
-    init(communicationService: ICommunicatorDelegate) {
+    init(communicationService: ICommunicatorDelegate, storageService: (IDataManager & IStorageManager)) {
         self.communicationService = communicationService
         self.communicationService?.delegate = self
+        
+        self.storageService = storageService
     }
     
     func getMessages() -> [ConversationCellData] {
@@ -78,7 +83,7 @@ class ConversationModel : IConversationModel {
 
 extension ConversationModel : ICommunicationManagerDelegate, IHavingSendButton {
     func reloadData() {
-        (self.delegate as? ConversationViewController)?.setup(dataSource: getMessages())
+        (self.delegate as? ConversationViewController)?.dataProvider?.fetchResults()
     }
     
     func enableSendButton(enable: Bool) {

@@ -39,7 +39,7 @@ class CommunicationManager: ICommunicatorDelegate {
     
     private var communicator : ICommunicator?
     private var storage : IStorageManager?
-
+    
     var conversations : [ConversationsListCellData] = []
     var conversationMessages : [String: [ConversationCellData]] = [:]
     
@@ -55,7 +55,7 @@ class CommunicationManager: ICommunicatorDelegate {
     func didFoundUser(userID: String, userName: String?) {
         
         storage?.setOnlineConversation(userID: userID, userName: userName)
-
+        
         self.delegate?.reloadData()
         if let delegateVC = self.delegate as? IHavingSendButton {
             delegateVC.enableSendButton(enable: true)
@@ -79,34 +79,23 @@ class CommunicationManager: ICommunicatorDelegate {
     func failedToStartAdvertising(error: Error) {
         
     }
-
+    
     func didReceiveMessage(text: String, fromUser: String, toUser: String) {
         
-        conversations.enumerated().forEach({ (index, conversation) in
-            if fromUser == conversation.ID {
-                conversations[index].message = text
-                conversations[index].date = Date()
-                conversations[index].hasUnreadMessages = true
-                conversations[index].lastIncoming = true
+        storage?.saveMessage(incoming: true, text: text, companion: fromUser)
+        if let delegate = self.delegate as? ConversationsListModel {
+            if let listDelegate = delegate.delegate as? ConversationsListViewController {
+                listDelegate.dataProvider?.fetchResults()
+                listDelegate.reloadData()
             }
-        })
-        
-        if conversationMessages[fromUser] == nil {
-            conversationMessages[fromUser] = []
         }
-        
-        if var messages = conversationMessages[fromUser] {
-            messages.insert(ConversationCellData(identifier: "Incoming Message Cell ID", textMessage: text), at: 0)
-            conversationMessages[fromUser] = messages
-        }
-        
-        
-        
         self.delegate?.reloadData()
     }
     
     func sendMessage(string: String, to userID: String, completionHandler: ((_ success: Bool, _ error: Error?) -> ())?) {
         communicator?.sendMessage(string: string, to: userID, completionHandler: completionHandler)
+        storage?.saveMessage(incoming: false, text: string, companion: userID)
+        
         self.delegate?.reloadData()
     }
     

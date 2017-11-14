@@ -24,7 +24,7 @@ class ConversationAssembly {
     // MARK: - PRIVATE SECTION
     
     private func conversationModel() -> IConversationModel {
-        return ConversationModel(communicationService: communicationManager())
+        return ConversationModel(communicationService: communicationManager(), storageService: storageManager())
     }
     
     private func communicationManager() -> ICommunicatorDelegate {
@@ -32,4 +32,9 @@ class ConversationAssembly {
         return appDelegate.rootAssembly.communicationManager
     }
     
+    private func storageManager() -> (IDataManager & IStorageManager) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.rootAssembly.storageManager
+    }
+
 }

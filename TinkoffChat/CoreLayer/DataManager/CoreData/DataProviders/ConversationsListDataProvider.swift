@@ -20,7 +20,6 @@ class ConversationsListDataProvider : NSObject, IDataProvider {
         self.tableView = tableView
         self.storage = storage
         
-        //        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         guard let context = storage.stack.mainContext else { return nil }
         guard let model = context.persistentStoreCoordinator?.managedObjectModel else {
             print("Empty managed object model")
@@ -33,7 +32,6 @@ class ConversationsListDataProvider : NSObject, IDataProvider {
         }
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: "isOnline", cacheName: nil)
-        print(fetchedResultsController.sections?.count)
         super.init()
         fetchedResultsController.delegate = self
         self.fetchResults()
@@ -50,48 +48,34 @@ class ConversationsListDataProvider : NSObject, IDataProvider {
 
 extension ConversationsListDataProvider : NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        DispatchQueue.main.async {
             self.tableView.beginUpdates()
-//        }
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        DispatchQueue.main.async {
             self.tableView.endUpdates()
-//        }
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .delete:
             if let indexPath = indexPath {
-//                DispatchQueue.main.async {
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                }
             }
         case .insert:
             if let newIndexPath = newIndexPath {
-//                DispatchQueue.main.async {
                     self.tableView.insertRows(at: [newIndexPath], with: .automatic)
-//                }
             }
         case .move:
             if let indexPath = indexPath {
-//                DispatchQueue.main.async {
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                }
             }
             
             if let newIndexPath = newIndexPath {
-//                DispatchQueue.main.async {
                     self.tableView.insertRows(at: [newIndexPath], with: .automatic)
-//                }
             }
         case .update:
             if let indexPath = indexPath {
-//                DispatchQueue.main.async {
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
-//                }
             }
         }
     }
@@ -99,15 +83,11 @@ extension ConversationsListDataProvider : NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         switch type {
         case .delete:
-//            DispatchQueue.main.async {
                 self.tableView.deleteSections(IndexSet(integer: sectionIndex), with: .automatic)
-//            }
         case .insert:
-//            DispatchQueue.main.async {
                 self.tableView.insertSections(IndexSet(integer: sectionIndex), with: .automatic)
-//            }
         case .move, .update:
             break
         }
     }
-}
+    }

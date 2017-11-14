@@ -24,7 +24,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         configureTable()
         
         guard let storage = model?.storageService else { return }
-        dataProvider = ConversationsListDataProvider(tableView: tableView, storage: storage) as? IDataProvider
+        dataProvider = ConversationsListDataProvider(tableView: tableView, storage: storage)
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive(notification:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
@@ -48,8 +48,6 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     
     @objc func applicationWillResignActive(notification: NSNotification) {
         dataProvider?.storage.setAppUserOffline()
-//        setup(dataSource: [])
-//        model?.clearConversations()
     }
     
     // MARK: - UITableView
@@ -72,11 +70,13 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         } else {
             cell = ConversationsListCell(style: .default, reuseIdentifier: identifier)
         }
-        
         if let conversation = (self.dataProvider as? ConversationsListDataProvider)?.fetchedResultsController.object(at: indexPath) {
             cell.ID = conversation.conversationId
             cell.name = conversation.participant?.name
             cell.date = conversation.lastMessage?.date
+            if cell.date == Date(timeIntervalSince1970: 0) {
+                cell.date = nil
+            }
             cell.message = conversation.lastMessage?.text
             if let count = conversation.unreadMessages?.count {
                 cell.hasUnreadMessages = count > 0 ? true : false
@@ -101,11 +101,10 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let frcObject = (self.dataProvider as? ConversationsListDataProvider)?.fetchedResultsController.object(at: indexPath) else { return }
-        prepareConversationVC(title: frcObject.participant?.name, userId: frcObject.conversationId)
-        
-//        conversations[indexPath.row].hasUnreadMessages  = false
-//        prepareConversationVC(title: conversations[indexPath.row].name, userId: conversations[indexPath.row].ID)
+        guard let conversation = (self.dataProvider as? ConversationsListDataProvider)?.fetchedResultsController.object(at: indexPath) else { return }
+        guard let unreadMessages = conversation.unreadMessages else { return }
+        conversation.removeFromUnreadMessages(unreadMessages)
+        prepareConversationVC(title: conversation.participant?.name, userId: conversation.participant?.userId)
     }
     
     // MARK: - IBActions

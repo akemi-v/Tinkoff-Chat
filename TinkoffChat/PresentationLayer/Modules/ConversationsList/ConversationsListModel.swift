@@ -61,7 +61,8 @@ class ConversationsListModel : IConversationsListModel {
 }
 
 extension ConversationsListModel : ICommunicationManagerDelegate {
+    
     func reloadData() {
-        (self.delegate as? ConversationsListViewController)?.setup(dataSource: getConversations())
+        (self.delegate as? ConversationsListViewController)?.dataProvider?.fetchResults()
     } 
 }

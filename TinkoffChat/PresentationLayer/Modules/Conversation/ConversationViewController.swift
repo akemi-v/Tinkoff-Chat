@@ -23,6 +23,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     private var messages: [ConversationCellData] = []
     
     var model : IConversationModel?
+    var dataProvider : IDataProvider?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,17 +33,24 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         configureMessafeField()
 
         enableSendButton(enable: false)
+        
+        guard let storage = model?.storageService, let context = storage.stack.saveContext else { return }
+        let conversation = Conversation.findOrInsertConversation(userId: userId ?? "", name: "", in: context)
+        dataProvider = ConversationDataProvider(tableView: tableView, conversationId: conversation?.conversationId ?? "", storage: storage)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         registerForKeyboardNotifications(selectorShow: #selector(keyboardWillShow), selectorHide: #selector(keyboardWillHide))
         model?.userId = userId
-        setup(dataSource: model?.getMessages() ?? [])
+        
+        dataProvider?.fetchResults()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         deregisterForKeyboardNotifications()
-        model?.markConversationAsRead()
+//        model?.markConversationAsRead()
+        guard let unwrappedUserId = userId else { return }
+        dataProvider?.storage.markConversationAsRead(userId: unwrappedUserId)
         prepareConversationsListVC()
         
         super.viewWillDisappear(animated)
@@ -57,16 +65,22 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     // MARK: - UITableView
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        guard let frc = (self.dataProvider as? ConversationDataProvider)?.fetchedResultsController, let sectionsCount = frc.sections?.count else { return 0 }
+        return sectionsCount
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages.count
+        guard let frc = (self.dataProvider as? ConversationDataProvider)?.fetchedResultsController, let sections = frc.sections else { return 0 }
+        return sections[section].numberOfObjects
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = messages[indexPath.row]
-        let identifier = message.identifier ?? "Incoming Message Cell ID"
+//        let message = messages[indexPath.row]
+//        let identifier = message.identifier ?? "Incoming Message Cell ID"
+        
+        guard let message = (self.dataProvider as? ConversationDataProvider)?.fetchedResultsController.object(at: indexPath) else { return MessageCell() }
+        let identifier = message.incoming ? "Incoming Message Cell ID" : "Outgoing Message Cell ID"
+        
         var cell : MessageCell
         if let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: identifier) as? MessageCell {
             cell = dequeuedCell
@@ -86,7 +100,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
             cell.textMessageLabel.textColor = UIColor .black
         }
         
-        if let text = message.textMessage {
+        if let text = message.text {
             cell.textMessageLabel.text = text
         }
 
@@ -100,14 +114,11 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else { return }
         guard let userIdUnwrapped = userId else { return }
         
-        messages.insert(ConversationCellData(identifier: "Outgoing Message Cell ID", textMessage: messageField.text), at: 0)
-        model?.updateConversationMessages(with: messages)
-        model?.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
-        model?.updateConversationData(with: messageField.text ?? "")
+        model?.communicationService?.sendMessage(string: messageField.text ?? "", to: userIdUnwrapped, completionHandler: nil)
         
         self.messageField.text = ""
         enableSendButton(enable: false)
-        setup(dataSource: messages)
+        self.dataProvider?.fetchResults()
     }
     
     // MARK: - Keyboard related
@@ -189,10 +200,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
 // MARK: - Delegates
 
 extension ConversationViewController: ICommunicationManagerDelegate, IHavingSendButton {
+    
     @objc func reloadData() {
-        guard let unwrappedUserId = userId else { return }
-        guard let conversationMessages = model?.communicationService?.conversationMessages[unwrappedUserId] else { return }
-        messages = conversationMessages
+        self.dataProvider?.fetchResults()
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -208,7 +218,8 @@ extension ConversationViewController: ICommunicationManagerDelegate, IHavingSend
 
 extension ConversationViewController: IConversationModelDelegate {
     func setup(dataSource: [ConversationCellData]) {
-        messages = dataSource
+//        messages = dataSource
+        self.dataProvider?.fetchResults()
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }

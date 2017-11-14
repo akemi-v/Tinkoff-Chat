@@ -10,16 +10,20 @@ import Foundation
 import UIKit
 import CoreData
 
-class ConversationDataProvider : NSObject {
+class ConversationDataProvider : NSObject, IDataProvider {
     
     let fetchedResultsController : NSFetchedResultsController<Message>
     let tableView : UITableView
-//    var storage: IStorageManager
+    var storage: IStorageManager
+    let conversationId : String
     
-    init?(tableView: UITableView, conversationId: String) {
+    init?(tableView: UITableView, conversationId: String, storage: IStorageManager) {
         self.tableView = tableView
+        self.storage = storage
+        self.conversationId = conversationId
         
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        
+        guard let context = storage.stack.mainContext else { return nil }
         guard let model = context.persistentStoreCoordinator?.managedObjectModel else {
             print("Empty managed object model")
             return nil
@@ -31,9 +35,9 @@ class ConversationDataProvider : NSObject {
         }
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        
         super.init()
         fetchedResultsController.delegate = self
+        self.fetchResults()
     }
     
     func fetchResults() {

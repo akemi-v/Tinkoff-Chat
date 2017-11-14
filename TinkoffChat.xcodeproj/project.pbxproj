@@ -139,9 +139,9 @@
 		184FFC581FBA17B500B398C7 /* DataProviders */ = {
 			isa = PBXGroup;
 			children = (
+				18E4E12E1FB771AF00E550D3 /* ConversationsListDataProvider.swift */,
 				18E4E12C1FB74E6A00E550D3 /* ConversationDataProvider.swift */,
 				185387A51FB88E6600F15D11 /* IDataProvider.swift */,
-				18E4E12E1FB771AF00E550D3 /* ConversationsListDataProvider.swift */,
 			);
 			path = DataProviders;
 			sourceTree = "<group>";

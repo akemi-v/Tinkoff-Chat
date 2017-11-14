@@ -34,10 +34,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         super.init(coder: aDecoder)
     }
     
-    private func setupInit() {
-        
-    }
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()

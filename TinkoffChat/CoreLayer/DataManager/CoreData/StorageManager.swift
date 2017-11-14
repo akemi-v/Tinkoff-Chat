@@ -55,6 +55,9 @@ class StorageManager: NSObject, IDataManager, IStorageManager {
         conversation.name = userName
         conversation.isOnline = user.isOnline
         conversation.date = conversation.lastMessage?.date
+        if conversation.date == nil {
+            conversation.date = Date(timeIntervalSince1970: 0)
+        }
         
         user.conversations = conversation
         
@@ -97,5 +100,38 @@ class StorageManager: NSObject, IDataManager, IStorageManager {
         appUser?.currentUser?.isOnline = false
         
         stack.performSave(context: context, completionHandler: nil)
-    }    
+    }
+    
+    func saveMessage(incoming: Bool, text: String, companion: String) {
+        guard let context = stack.saveContext else { return }
+        
+        guard let message = Message.insertMessage(incoming: incoming, text: text, in: context) else { return }
+        let companionUser = User.findOrInsertUser(userId: companion, name: "", in: context)
+        let appUser = AppUser.findOrInsertAppUser(in: context)
+        guard let conversation = Conversation.findOrInsertConversation(userId: companion, name: "", in: context) else { return }
+
+        let receiver = incoming ? appUser?.currentUser : companionUser
+        let sender = incoming ? companionUser : appUser?.currentUser
+        message.receiver = receiver
+        message.sender = sender
+        message.conversation = conversation
+        message.lastMessageInConversation = conversation
+        
+        if incoming {
+            message.unreadInConversation = conversation
+        }
+        
+        stack.performSave(context: context, completionHandler: nil)
+    }
+    
+    func markConversationAsRead(userId: String) {
+        guard let context = stack.saveContext else { return }
+        
+        guard let conversation = Conversation.findOrInsertConversation(userId: userId, name: "", in: context) else { return }
+        guard let unreadMessages = conversation.unreadMessages else { return }
+        conversation.removeFromUnreadMessages(unreadMessages)
+        
+        stack.performSave(context: context, completionHandler: nil)
+
+    }
 }

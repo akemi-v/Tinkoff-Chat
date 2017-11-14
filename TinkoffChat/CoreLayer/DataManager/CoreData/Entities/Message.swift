@@ -17,6 +17,9 @@ extension Message {
             return nil
         }
         
+        let sortByDate = NSSortDescriptor(key: "date", ascending: false)
+        fetchRequest.sortDescriptors = [sortByDate]
+        
         return fetchRequest
     }
     
@@ -26,6 +29,9 @@ extension Message {
             message.date = Date()
             message.incoming = incoming
             message.text = text
+            message.conversation?.date = message.date
+            message.lastMessageInConversation = message.conversation
+            message.lastMessageInConversation?.lastMessage?.date = message.date
             
             return message
         }

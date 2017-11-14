@@ -19,9 +19,9 @@ extension Conversation {
         }
         
         let sortByOnline = NSSortDescriptor(key: "isOnline", ascending: false)
-        let sortByDate = NSSortDescriptor(key: "date", ascending: true)
+        let sortByDate = NSSortDescriptor(key: "date", ascending: false)
         let sortByName = NSSortDescriptor(key: "name", ascending: true)
-        fetchRequest.sortDescriptors = [sortByOnline, sortByDate]
+        fetchRequest.sortDescriptors = [sortByOnline, sortByDate, sortByName]
         
         return fetchRequest
     }

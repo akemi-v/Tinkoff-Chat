@@ -16,4 +16,7 @@ protocol IStorageManager {
     func setOnlineConversation(userID: String, userName: String?)
     func setOfflineConversation(userID: String)
     func setAllConversationsOffline()
+    func markConversationAsRead(userId: String)
+    
+    func saveMessage(incoming: Bool, text: String, companion: String)
 }
