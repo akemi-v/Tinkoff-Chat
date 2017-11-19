@@ -18,6 +18,20 @@
 		184D16711F72C9D400BBF892 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 184D166F1F72C9D400BBF892 /* LaunchScreen.storyboard */; };
 		184D16791F72D1A900BBF892 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 184D16781F72D1A800BBF892 /* Media.xcassets */; };
 		185387A61FB88E6600F15D11 /* IDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185387A51FB88E6600F15D11 /* IDataProvider.swift */; };
+		18542BFF1FC093F900D0021F /* ProfilePicFromWeb.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18542BFE1FC093F900D0021F /* ProfilePicFromWeb.storyboard */; };
+		18542C011FC0941600D0021F /* ProfilePicFromWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C001FC0941600D0021F /* ProfilePicFromWebViewController.swift */; };
+		18542C031FC0943700D0021F /* ProfilePicFromWebAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C021FC0943700D0021F /* ProfilePicFromWebAssembly.swift */; };
+		18542C051FC094F200D0021F /* PicsFromWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C041FC094F200D0021F /* PicsFromWebService.swift */; };
+		18542C0B1FC0959C00D0021F /* IRequestSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C0A1FC0959C00D0021F /* IRequestSender.swift */; };
+		18542C0D1FC095A800D0021F /* RequestSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C0C1FC095A800D0021F /* RequestSender.swift */; };
+		18542C0F1FC095DA00D0021F /* RequestsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C0E1FC095DA00D0021F /* RequestsFactory.swift */; };
+		18542C111FC0962B00D0021F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C101FC0962B00D0021F /* Parser.swift */; };
+		18542C131FC0963C00D0021F /* PicUrlsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C121FC0963C00D0021F /* PicUrlsParser.swift */; };
+		18542C151FC0964900D0021F /* IRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C141FC0964900D0021F /* IRequest.swift */; };
+		18542C171FC0965F00D0021F /* PixabayPicsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C161FC0965F00D0021F /* PixabayPicsRequest.swift */; };
+		18542C191FC0BF5700D0021F /* IParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C181FC0BF5700D0021F /* IParser.swift */; };
+		18542C1B1FC0D12400D0021F /* PicFromWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C1A1FC0D12400D0021F /* PicFromWebModel.swift */; };
+		18542C1D1FC19EA400D0021F /* PicCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18542C1C1FC19EA400D0021F /* PicCollectionViewCell.swift */; };
 		1860BCA61FA607D0006B802C /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1860BCA41FA607D0006B802C /* Profile.storyboard */; };
 		1860BCA81FA6081C006B802C /* Conversation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1860BCA71FA6081C006B802C /* Conversation.storyboard */; };
 		186174E61F937CA40003FCE3 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186174E51F937CA40003FCE3 /* Helpers.swift */; };
@@ -41,6 +55,8 @@
 		18D079C81F89CA87003E45E4 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D079C71F89CA87003E45E4 /* ConversationViewController.swift */; };
 		18D079CA1F89D055003E45E4 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D079C91F89D055003E45E4 /* MessageCell.swift */; };
 		18D079D01F8AC6F9003E45E4 /* ConversationCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D079CF1F8AC6F9003E45E4 /* ConversationCellData.swift */; };
+		18D5CC871FC1B22800794941 /* PictureParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D5CC861FC1B22800794941 /* PictureParser.swift */; };
+		18D5CC891FC1B37500794941 /* PictureRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D5CC881FC1B37500794941 /* PictureRequest.swift */; };
 		18E4715B1FB9BE510055E516 /* IStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E4715A1FB9BE510055E516 /* IStorageManager.swift */; };
 		18E4E1291FB74C7200E550D3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E4E1281FB74C7200E550D3 /* Message.swift */; };
 		18E4E12B1FB74C8700E550D3 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E4E12A1FB74C8700E550D3 /* Conversation.swift */; };
@@ -62,6 +78,20 @@
 		184D16721F72C9D400BBF892 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		184D16781F72D1A800BBF892 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		185387A51FB88E6600F15D11 /* IDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDataProvider.swift; sourceTree = "<group>"; };
+		18542BFE1FC093F900D0021F /* ProfilePicFromWeb.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ProfilePicFromWeb.storyboard; sourceTree = "<group>"; };
+		18542C001FC0941600D0021F /* ProfilePicFromWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePicFromWebViewController.swift; sourceTree = "<group>"; };
+		18542C021FC0943700D0021F /* ProfilePicFromWebAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePicFromWebAssembly.swift; sourceTree = "<group>"; };
+		18542C041FC094F200D0021F /* PicsFromWebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicsFromWebService.swift; sourceTree = "<group>"; };
+		18542C0A1FC0959C00D0021F /* IRequestSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IRequestSender.swift; sourceTree = "<group>"; };
+		18542C0C1FC095A800D0021F /* RequestSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestSender.swift; sourceTree = "<group>"; };
+		18542C0E1FC095DA00D0021F /* RequestsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsFactory.swift; sourceTree = "<group>"; };
+		18542C101FC0962B00D0021F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
+		18542C121FC0963C00D0021F /* PicUrlsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicUrlsParser.swift; sourceTree = "<group>"; };
+		18542C141FC0964900D0021F /* IRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IRequest.swift; sourceTree = "<group>"; };
+		18542C161FC0965F00D0021F /* PixabayPicsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixabayPicsRequest.swift; sourceTree = "<group>"; };
+		18542C181FC0BF5700D0021F /* IParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IParser.swift; sourceTree = "<group>"; };
+		18542C1A1FC0D12400D0021F /* PicFromWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicFromWebModel.swift; sourceTree = "<group>"; };
+		18542C1C1FC19EA400D0021F /* PicCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicCollectionViewCell.swift; sourceTree = "<group>"; };
 		1860BCA51FA607D0006B802C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Profile.storyboard; sourceTree = "<group>"; };
 		1860BCA71FA6081C006B802C /* Conversation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Conversation.storyboard; sourceTree = "<group>"; };
 		186174E51F937CA40003FCE3 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
@@ -85,6 +115,8 @@
 		18D079C71F89CA87003E45E4 /* ConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		18D079C91F89D055003E45E4 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		18D079CF1F8AC6F9003E45E4 /* ConversationCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCellData.swift; sourceTree = "<group>"; };
+		18D5CC861FC1B22800794941 /* PictureParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureParser.swift; sourceTree = "<group>"; };
+		18D5CC881FC1B37500794941 /* PictureRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureRequest.swift; sourceTree = "<group>"; };
 		18E4715A1FB9BE510055E516 /* IStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IStorageManager.swift; sourceTree = "<group>"; };
 		18E4E1281FB74C7200E550D3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		18E4E12A1FB74C8700E550D3 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
@@ -146,9 +178,63 @@
 			path = DataProviders;
 			sourceTree = "<group>";
 		};
+		18542BFD1FC093D000D0021F /* ProfilePicFromWeb */ = {
+			isa = PBXGroup;
+			children = (
+				18542BFE1FC093F900D0021F /* ProfilePicFromWeb.storyboard */,
+				18542C001FC0941600D0021F /* ProfilePicFromWebViewController.swift */,
+				18542C021FC0943700D0021F /* ProfilePicFromWebAssembly.swift */,
+				18542C1A1FC0D12400D0021F /* PicFromWebModel.swift */,
+				18542C1C1FC19EA400D0021F /* PicCollectionViewCell.swift */,
+			);
+			path = ProfilePicFromWeb;
+			sourceTree = "<group>";
+		};
+		18542C061FC0952900D0021F /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				18542C091FC0956600D0021F /* Requests */,
+				18542C081FC0956000D0021F /* Parsers */,
+				18542C0E1FC095DA00D0021F /* RequestsFactory.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		18542C071FC0953D00D0021F /* RequestManager */ = {
+			isa = PBXGroup;
+			children = (
+				18542C0A1FC0959C00D0021F /* IRequestSender.swift */,
+				18542C0C1FC095A800D0021F /* RequestSender.swift */,
+			);
+			path = RequestManager;
+			sourceTree = "<group>";
+		};
+		18542C081FC0956000D0021F /* Parsers */ = {
+			isa = PBXGroup;
+			children = (
+				18542C101FC0962B00D0021F /* Parser.swift */,
+				18542C121FC0963C00D0021F /* PicUrlsParser.swift */,
+				18542C181FC0BF5700D0021F /* IParser.swift */,
+				18D5CC861FC1B22800794941 /* PictureParser.swift */,
+			);
+			path = Parsers;
+			sourceTree = "<group>";
+		};
+		18542C091FC0956600D0021F /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				18542C141FC0964900D0021F /* IRequest.swift */,
+				18542C161FC0965F00D0021F /* PixabayPicsRequest.swift */,
+				18D5CC881FC1B37500794941 /* PictureRequest.swift */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
 		1860BCA91FA6098B006B802C /* CoreLayer */ = {
 			isa = PBXGroup;
 			children = (
+				18542C071FC0953D00D0021F /* RequestManager */,
+				18542C061FC0952900D0021F /* Networking */,
 				1880DBB81FA68F09002246DA /* DataManager */,
 				1880DBB71FA68EE1002246DA /* MultipeerCommunicator */,
 			);
@@ -160,6 +246,7 @@
 			children = (
 				182BDE821F98C73800455D7F /* CommunicationManager.swift */,
 				1880DBAE1FA689A5002246DA /* ProfileService.swift */,
+				18542C041FC094F200D0021F /* PicsFromWebService.swift */,
 			);
 			path = ServiceLayer;
 			sourceTree = "<group>";
@@ -175,6 +262,7 @@
 		1880DB9F1FA67ADA002246DA /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				18542BFD1FC093D000D0021F /* ProfilePicFromWeb */,
 				1880DBA21FA67AFA002246DA /* Conversation */,
 				1880DBA11FA67AEE002246DA /* ConversationsList */,
 				1880DBA01FA67AE2002246DA /* Profile */,
@@ -333,6 +421,7 @@
 			files = (
 				184D16711F72C9D400BBF892 /* LaunchScreen.storyboard in Resources */,
 				184D166E1F72C9D400BBF892 /* Assets.xcassets in Resources */,
+				18542BFF1FC093F900D0021F /* ProfilePicFromWeb.storyboard in Resources */,
 				1860BCA61FA607D0006B802C /* Profile.storyboard in Resources */,
 				1860BCA81FA6081C006B802C /* Conversation.storyboard in Resources */,
 				184D16791F72D1A900BBF892 /* Media.xcassets in Resources */,
@@ -349,15 +438,21 @@
 			files = (
 				186D44191F8683A9001415FE /* ConversationsListCell.swift in Sources */,
 				182BDE611F97BCFE00455D7F /* MultipeerCommunicator.swift in Sources */,
+				18542C0D1FC095A800D0021F /* RequestSender.swift in Sources */,
 				18E4E12B1FB74C8700E550D3 /* Conversation.swift in Sources */,
 				18CE057B1FAC6AEF007A3F8F /* StorageManager.swift in Sources */,
 				1880DBC01FA70D30002246DA /* ConversationsListModel.swift in Sources */,
 				1880DBB21FA68DFC002246DA /* GCDDataManager.swift in Sources */,
 				18CE05811FAC7DDC007A3F8F /* User.swift in Sources */,
 				18E4E12D1FB74E6A00E550D3 /* ConversationDataProvider.swift in Sources */,
+				18542C011FC0941600D0021F /* ProfilePicFromWebViewController.swift in Sources */,
 				1880DBC41FA71932002246DA /* ConversationModel.swift in Sources */,
+				18542C0F1FC095DA00D0021F /* RequestsFactory.swift in Sources */,
+				18542C111FC0962B00D0021F /* Parser.swift in Sources */,
 				1880DBB61FA68E91002246DA /* IDataManager.swift in Sources */,
 				18D079C61F89AD48003E45E4 /* ConversationsListCellData.swift in Sources */,
+				18542C151FC0964900D0021F /* IRequest.swift in Sources */,
+				18D5CC891FC1B37500794941 /* PictureRequest.swift in Sources */,
 				186174E61F937CA40003FCE3 /* Helpers.swift in Sources */,
 				1880DBC61FA71942002246DA /* ConversationAssembly.swift in Sources */,
 				18D079C81F89CA87003E45E4 /* ConversationViewController.swift in Sources */,
@@ -366,14 +461,23 @@
 				18D079D01F8AC6F9003E45E4 /* ConversationCellData.swift in Sources */,
 				184D16691F72C9D400BBF892 /* ProfileViewController.swift in Sources */,
 				18CE057F1FAC6EDD007A3F8F /* AppUser.swift in Sources */,
+				18542C031FC0943700D0021F /* ProfilePicFromWebAssembly.swift in Sources */,
 				1880DBAD1FA681FC002246DA /* ProfileModel.swift in Sources */,
+				18542C191FC0BF5700D0021F /* IParser.swift in Sources */,
 				184D16671F72C9D400BBF892 /* AppDelegate.swift in Sources */,
 				184A940A1FAB441300D64552 /* CoreDataStack.swift in Sources */,
 				186D44171F867971001415FE /* ConversationsListViewController.swift in Sources */,
+				18542C1B1FC0D12400D0021F /* PicFromWebModel.swift in Sources */,
+				18542C0B1FC0959C00D0021F /* IRequestSender.swift in Sources */,
 				182BDE831F98C73800455D7F /* CommunicationManager.swift in Sources */,
+				18D5CC871FC1B22800794941 /* PictureParser.swift in Sources */,
+				18542C1D1FC19EA400D0021F /* PicCollectionViewCell.swift in Sources */,
+				18542C171FC0965F00D0021F /* PixabayPicsRequest.swift in Sources */,
+				18542C131FC0963C00D0021F /* PicUrlsParser.swift in Sources */,
 				18D079CA1F89D055003E45E4 /* MessageCell.swift in Sources */,
 				184A94081FAB42A800D64552 /* TinkoffChat.xcdatamodeld in Sources */,
 				1880DBBE1FA70BEF002246DA /* ConversationsListAssembly.swift in Sources */,
+				18542C051FC094F200D0021F /* PicsFromWebService.swift in Sources */,
 				18E4715B1FB9BE510055E516 /* IStorageManager.swift in Sources */,
 				1880DBB41FA68E0A002246DA /* OperationDataManager.swift in Sources */,
 				185387A61FB88E6600F15D11 /* IDataProvider.swift in Sources */,

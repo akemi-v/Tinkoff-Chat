@@ -171,9 +171,30 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
         }
         
+        let downloadPicAction = UIAlertAction(title: "Загрузить из сети", style: .default) { action -> Void in
+            let assembly = ProfilePicFromWebAssembly()
+            
+            let setProfilePic = { [weak self] (image: UIImage?) in
+                self?.profilePicImageView.contentMode = .scaleAspectFit
+                self?.profilePicImageView.image = image
+                self?.enableButtons(enable: true)
+            }
+            
+            if let profilePicFromWeb = assembly.profilePicFromWebViewController(completionHandler: setProfilePic) {
+                self.present(profilePicFromWeb, animated: true)
+            } else {
+                let alertMessageController = UIAlertController(title: "Ошибка!", message: "Нет доступа", preferredStyle: .alert)
+                let alertBackAction = UIAlertAction(title: "Назад", style: .default, handler: nil)
+                alertMessageController.addAction(alertBackAction)
+                
+                self.present(alertMessageController, animated: true, completion: nil)
+            }
+        }
+        
         alertController.addAction(cancelAction)
         alertController.addAction(choosePicFromGalleryAction)
         alertController.addAction(takePicWithCameraAction)
+        alertController.addAction(downloadPicAction)
         self.present(alertController, animated: true, completion: nil)
     }
     
