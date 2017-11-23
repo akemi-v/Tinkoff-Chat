@@ -31,7 +31,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         configureTable()
         configureTapGestureRecognizer()
         configureMessafeField()
-
+        
+        configureSendButton()
         enableSendButton(enable: false)
         
         guard let storage = model?.storageService, let context = storage.stack.saveContext else { return }
@@ -190,6 +191,14 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         messageField.addTarget(self, action: #selector(checkInput), for: .editingChanged)
     }
     
+    private func configureSendButton() {
+        sendMessageButton.layer.masksToBounds = true;
+        sendMessageButton.layer.cornerRadius = 10;
+        sendMessageButton.setTitleColor(UIColor .white, for: .normal)
+        sendMessageButton.backgroundColor = UIColor.init(red: 90/255, green: 0/255, blue: 202/255, alpha: 1.0)
+        sendMessageButton.contentEdgeInsets = UIEdgeInsetsMake(5.0, 8.0, 5.0, 8.0)
+    }
+    
     private func prepareConversationsListVC() {
         let conversationsListVC = ConversationsListAssembly().conversationsListViewCotnroller()
         self.navigationController?.setViewControllers([conversationsListVC.topViewController!], animated: false)
@@ -209,8 +218,20 @@ extension ConversationViewController: ICommunicationManagerDelegate, IHavingSend
     }
     
     func enableSendButton(enable: Bool) {
-        DispatchQueue.main.async {
-            self.sendMessageButton.isEnabled = enable
+        if (sendMessageButton.isEnabled != enable) {
+            DispatchQueue.main.async {
+                self.sendMessageButton.isEnabled = enable
+                
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.sendMessageButton.backgroundColor = enable ? UIColor.init(red: 90/255, green: 0/255, blue: 202/255, alpha: 1.0) : UIColor .lightGray
+                    self.sendMessageButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+                    
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.sendMessageButton.transform = CGAffineTransform.identity
+                    })
+                })
+            }
         }
     }
 

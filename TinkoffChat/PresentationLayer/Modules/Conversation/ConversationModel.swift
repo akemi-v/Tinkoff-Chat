@@ -87,6 +87,7 @@ extension ConversationModel : ICommunicationManagerDelegate, IHavingSendButton {
     }
     
     func enableSendButton(enable: Bool) {
-        (self.delegate as? ConversationViewController)?.sendMessageButton.isEnabled = enable
+        (self.delegate as? ConversationViewController)?.enableSendButton(enable: enable)
+        
     }
 }
