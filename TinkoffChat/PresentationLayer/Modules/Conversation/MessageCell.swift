@@ -38,9 +38,25 @@ class MessageCell: UITableViewCell, MessageCellConfiguration {
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
+        let color = self.messageView.backgroundColor
         super.setSelected(selected, animated: animated)
+        
+        if selected {
+            self.contentView.backgroundColor = .white
+            self.messageView.backgroundColor = color
+        }
 
-        // Configure the view for the selected state
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        let color = self.messageView.backgroundColor
+        super.setHighlighted(highlighted, animated: animated)
+        
+        if highlighted {
+            self.contentView.backgroundColor = .white
+            self.messageView.backgroundColor = color
+        }
+        
     }
 
 }

@@ -48,6 +48,8 @@
 		1880DBC01FA70D30002246DA /* ConversationsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1880DBBF1FA70D30002246DA /* ConversationsListModel.swift */; };
 		1880DBC41FA71932002246DA /* ConversationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1880DBC31FA71932002246DA /* ConversationModel.swift */; };
 		1880DBC61FA71942002246DA /* ConversationAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1880DBC51FA71942002246DA /* ConversationAssembly.swift */; };
+		18848F6D1FC9D4BB00F27B34 /* EmitterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18848F6C1FC9D4BB00F27B34 /* EmitterView.swift */; };
+		18848F6F1FC9E3BA00F27B34 /* EmitterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18848F6E1FC9E3BA00F27B34 /* EmitterViewController.swift */; };
 		18CE057B1FAC6AEF007A3F8F /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE057A1FAC6AEF007A3F8F /* StorageManager.swift */; };
 		18CE057F1FAC6EDD007A3F8F /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE057E1FAC6EDD007A3F8F /* AppUser.swift */; };
 		18CE05811FAC7DDC007A3F8F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE05801FAC7DDC007A3F8F /* User.swift */; };
@@ -108,6 +110,8 @@
 		1880DBBF1FA70D30002246DA /* ConversationsListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListModel.swift; sourceTree = "<group>"; };
 		1880DBC31FA71932002246DA /* ConversationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationModel.swift; sourceTree = "<group>"; };
 		1880DBC51FA71942002246DA /* ConversationAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAssembly.swift; sourceTree = "<group>"; };
+		18848F6C1FC9D4BB00F27B34 /* EmitterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmitterView.swift; sourceTree = "<group>"; };
+		18848F6E1FC9E3BA00F27B34 /* EmitterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmitterViewController.swift; sourceTree = "<group>"; };
 		18CE057A1FAC6AEF007A3F8F /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		18CE057E1FAC6EDD007A3F8F /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
 		18CE05801FAC7DDC007A3F8F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -255,6 +259,8 @@
 			isa = PBXGroup;
 			children = (
 				1880DB9F1FA67ADA002246DA /* Modules */,
+				18848F6C1FC9D4BB00F27B34 /* EmitterView.swift */,
+				18848F6E1FC9E3BA00F27B34 /* EmitterViewController.swift */,
 			);
 			path = PresentationLayer;
 			sourceTree = "<group>";
@@ -447,6 +453,7 @@
 				18E4E12D1FB74E6A00E550D3 /* ConversationDataProvider.swift in Sources */,
 				18542C011FC0941600D0021F /* ProfilePicFromWebViewController.swift in Sources */,
 				1880DBC41FA71932002246DA /* ConversationModel.swift in Sources */,
+				18848F6F1FC9E3BA00F27B34 /* EmitterViewController.swift in Sources */,
 				18542C0F1FC095DA00D0021F /* RequestsFactory.swift in Sources */,
 				18542C111FC0962B00D0021F /* Parser.swift in Sources */,
 				1880DBB61FA68E91002246DA /* IDataManager.swift in Sources */,
@@ -469,6 +476,7 @@
 				186D44171F867971001415FE /* ConversationsListViewController.swift in Sources */,
 				18542C1B1FC0D12400D0021F /* PicFromWebModel.swift in Sources */,
 				18542C0B1FC0959C00D0021F /* IRequestSender.swift in Sources */,
+				18848F6D1FC9D4BB00F27B34 /* EmitterView.swift in Sources */,
 				182BDE831F98C73800455D7F /* CommunicationManager.swift in Sources */,
 				18D5CC871FC1B22800794941 /* PictureParser.swift in Sources */,
 				18542C1D1FC19EA400D0021F /* PicCollectionViewCell.swift in Sources */,

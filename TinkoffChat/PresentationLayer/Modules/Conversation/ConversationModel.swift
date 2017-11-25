@@ -31,6 +31,7 @@ class ConversationModel : IConversationModel {
     var communicationService: ICommunicatorDelegate?
     var conversations: [ConversationCellData] = []
     var userId: String?
+    var isOnline: Bool?
     var storageService: (IDataManager & IStorageManager)?
 
     
@@ -81,7 +82,19 @@ class ConversationModel : IConversationModel {
     
 }
 
-extension ConversationModel : ICommunicationManagerDelegate, IHavingSendButton {
+extension ConversationModel : ICommunicationManagerDelegate, IHavingDependentOnStatusElements {
+    func setOnlineStatus(isOnline: Bool) {
+        self.isOnline = isOnline
+        (self.delegate as? ConversationViewController)?.isOnline = isOnline
+        enableSendButton(enable: isOnline)
+        setTitle(isOnline: isOnline)
+    }
+    
+    
+    func setTitle(isOnline: Bool) {
+        (self.delegate as? ConversationViewController)?.setTitle(isOnline: isOnline)
+    }
+    
     func reloadData() {
         (self.delegate as? ConversationViewController)?.dataProvider?.fetchResults()
     }

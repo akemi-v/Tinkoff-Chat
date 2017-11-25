@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
+class ProfileViewController: EmitterViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
     
     @IBOutlet weak var gcdSaveDataButton: UIButton?
     @IBOutlet weak var operationSaveDataButton: UIButton?

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfilePicFromWebViewController: UIViewController {
+class ProfilePicFromWebViewController: EmitterViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!

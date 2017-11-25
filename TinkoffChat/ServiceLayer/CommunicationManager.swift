@@ -30,8 +30,10 @@ protocol ICommunicationManagerDelegate : class {
     func reloadData()
 }
 
-protocol IHavingSendButton : class {
+protocol IHavingDependentOnStatusElements : class {
+    func setOnlineStatus(isOnline: Bool)
     func enableSendButton(enable: Bool)
+    func setTitle(isOnline: Bool)
 }
 
 class CommunicationManager: ICommunicatorDelegate {
@@ -57,9 +59,10 @@ class CommunicationManager: ICommunicatorDelegate {
         storage?.setOnlineConversation(userID: userID, userName: userName)
         
         self.delegate?.reloadData()
-        if let delegateVC = self.delegate as? IHavingSendButton {
-            delegateVC.enableSendButton(enable: true)
+        if let delegateVC = self.delegate as? IHavingDependentOnStatusElements {
+            delegateVC.setOnlineStatus(isOnline: true)
         }
+        
     }
     
     func didLostUser(userID: String) {        
@@ -67,8 +70,8 @@ class CommunicationManager: ICommunicatorDelegate {
         storage?.setOfflineConversation(userID: userID)
         
         self.delegate?.reloadData()
-        if let delegateVC = self.delegate as? IHavingSendButton {
-            delegateVC.enableSendButton(enable: false)
+        if let delegateVC = self.delegate as? IHavingDependentOnStatusElements {
+            delegateVC.setOnlineStatus(isOnline: false)
         }
     }
     

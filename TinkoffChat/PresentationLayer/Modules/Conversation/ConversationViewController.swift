@@ -9,7 +9,7 @@
 import UIKit
 import MultipeerConnectivity
 
-class ConversationViewController: UIViewController, UITableViewDataSource {
+class ConversationViewController: EmitterViewController, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -18,8 +18,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var footerView: UIView!
     
     private var activeTextField : UITextField?
+    private var titleLabel = UILabel()
     
     var userId: String? = nil
+    var isOnline: Bool = false
     private var messages: [ConversationCellData] = []
     
     var model : IConversationModel?
@@ -35,6 +37,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         configureSendButton()
         enableSendButton(enable: false)
         
+        setTitle()
+        
         guard let storage = model?.storageService, let context = storage.stack.saveContext else { return }
         let conversation = Conversation.findOrInsertConversation(userId: userId ?? "", name: "", in: context)
         dataProvider = ConversationDataProvider(tableView: tableView, conversationId: conversation?.conversationId ?? "", storage: storage)
@@ -45,6 +49,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         model?.userId = userId
         
         dataProvider?.fetchResults()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        animateConversationTitle(isOnline: isOnline)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -108,7 +116,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         cell.transform = CGAffineTransform(rotationAngle: .pi)
         return cell
     }
-        
+    
     // MARK: – Actions
     
     @IBAction func pressSendButton(_ sender: UIButton) {
@@ -163,7 +171,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         if let text = textField.text {
             if text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty {
                 enableSendButton(enable: false)
-            } else {
+            } else if isOnline {
                 enableSendButton(enable: true)
             }
         } else {
@@ -203,12 +211,50 @@ class ConversationViewController: UIViewController, UITableViewDataSource {
         let conversationsListVC = ConversationsListAssembly().conversationsListViewCotnroller()
         self.navigationController?.setViewControllers([conversationsListVC.topViewController!], animated: false)
     }
+    
+    private func setTitle() {
+        titleLabel.backgroundColor = UIColor .clear
+        titleLabel.textAlignment = .center
+        titleLabel.text = self.title
+        self.navigationItem.titleView = titleLabel
+        animateConversationTitle(isOnline: isOnline)
+    }
+    
+    private func animateSendButton(enable: Bool) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.sendMessageButton.backgroundColor = enable ? UIColor.init(red: 90/255, green: 0/255, blue: 202/255, alpha: 1.0) : UIColor .lightGray
+            self.sendMessageButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+            
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.5, animations: {
+                self.sendMessageButton.transform = CGAffineTransform.identity
+            })
+        })
+
+    }
+    
+    private func animateConversationTitle(isOnline: Bool) {
+        
+        UIView.transition(with: titleLabel, duration: 1.0, options: .transitionCrossDissolve, animations: {
+            self.titleLabel.font = isOnline ? UIFont .systemFont(ofSize: 19, weight: .bold) : UIFont .systemFont(ofSize: 17, weight: .bold)
+            self.titleLabel.textColor = isOnline ? UIColor .green : UIColor .black
+        }, completion: { _ in
+            
+        })
+    }
 
 }
 
 // MARK: - Delegates
 
-extension ConversationViewController: ICommunicationManagerDelegate, IHavingSendButton {
+extension ConversationViewController: ICommunicationManagerDelegate, IHavingDependentOnStatusElements {
+    func setOnlineStatus(isOnline: Bool) {
+        guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else { return }
+        self.isOnline = isOnline
+        enableSendButton(enable: isOnline)
+        setTitle(isOnline: isOnline)
+    }
+    
     
     @objc func reloadData() {
         self.dataProvider?.fetchResults()
@@ -219,20 +265,22 @@ extension ConversationViewController: ICommunicationManagerDelegate, IHavingSend
     
     func enableSendButton(enable: Bool) {
         if (sendMessageButton.isEnabled != enable) {
+            guard messageField.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false else {
+                DispatchQueue.main.async {
+                    self.sendMessageButton.isEnabled = false
+                    self.animateSendButton(enable: false)
+                }
+                return
+            }
             DispatchQueue.main.async {
                 self.sendMessageButton.isEnabled = enable
-                
-                UIView.animate(withDuration: 0.5, animations: {
-                    self.sendMessageButton.backgroundColor = enable ? UIColor.init(red: 90/255, green: 0/255, blue: 202/255, alpha: 1.0) : UIColor .lightGray
-                    self.sendMessageButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
-                    
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.sendMessageButton.transform = CGAffineTransform.identity
-                    })
-                })
+                self.animateSendButton(enable: enable)
             }
         }
+    }
+    
+    func setTitle(isOnline: Bool) {
+        self.animateConversationTitle(isOnline: isOnline)
     }
 
 }

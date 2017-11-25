@@ -9,7 +9,7 @@
 import UIKit
 import MultipeerConnectivity
 
-class ConversationsListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ConversationsListViewController: EmitterViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -39,6 +39,9 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -104,7 +107,7 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         guard let conversation = (self.dataProvider as? ConversationsListDataProvider)?.fetchedResultsController.object(at: indexPath) else { return }
         guard let unreadMessages = conversation.unreadMessages else { return }
         conversation.removeFromUnreadMessages(unreadMessages)
-        prepareConversationVC(title: conversation.participant?.name, userId: conversation.participant?.userId)
+        prepareConversationVC(title: conversation.participant?.name, userId: conversation.participant?.userId, isOnline: conversation.isOnline)
     }
     
     // MARK: - IBActions
@@ -121,11 +124,12 @@ class ConversationsListViewController: UIViewController, UITableViewDataSource, 
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    private func prepareConversationVC(title: String?, userId: String?) {
+    private func prepareConversationVC(title: String?, userId: String?, isOnline: Bool) {
         let destinationVC = ConversationAssembly().conversationViewController()
         destinationVC.model?.delegate = destinationVC
         destinationVC.title = title
         destinationVC.userId = userId
+        destinationVC.isOnline = isOnline
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
