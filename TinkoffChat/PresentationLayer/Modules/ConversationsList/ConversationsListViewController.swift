@@ -37,9 +37,6 @@ class ConversationsListViewController: EmitterViewController, UITableViewDataSou
         dataProvider?.fetchResults()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }

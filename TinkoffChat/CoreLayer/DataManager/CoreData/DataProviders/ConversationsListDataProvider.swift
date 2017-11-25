@@ -59,23 +59,23 @@ extension ConversationsListDataProvider : NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             if let indexPath = indexPath {
-                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    self.tableView.deleteRows(at: [indexPath], with: .none)
             }
         case .insert:
             if let newIndexPath = newIndexPath {
-                    self.tableView.insertRows(at: [newIndexPath], with: .automatic)
+                    self.tableView.insertRows(at: [newIndexPath], with: .none)
             }
         case .move:
             if let indexPath = indexPath {
-                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    self.tableView.deleteRows(at: [indexPath], with: .none)
             }
             
             if let newIndexPath = newIndexPath {
-                    self.tableView.insertRows(at: [newIndexPath], with: .automatic)
+                    self.tableView.insertRows(at: [newIndexPath], with: .none)
             }
         case .update:
             if let indexPath = indexPath {
-                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
             }
         }
     }
