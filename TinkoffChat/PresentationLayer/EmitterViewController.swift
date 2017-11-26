@@ -14,10 +14,10 @@ class EmitterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(recognizer:)))
-        gestureRecognizer.minimumPressDuration = 0.1
-        gestureRecognizer.cancelsTouchesInView = false
-        self.view.addGestureRecognizer(gestureRecognizer)
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(recognizer:)))
+        longPressGestureRecognizer.minimumPressDuration = 0.1
+        longPressGestureRecognizer.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(longPressGestureRecognizer)
 
 
         emitterView = EmitterView(frame: self.view.frame)
